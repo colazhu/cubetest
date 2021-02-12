@@ -7,7 +7,7 @@ TARGET = tst_cube
 CONFIG -= app_bundle gui core
 CONFIG += c++11
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = ../out
 
 LIBS += -lglfw -lGLESv2 -lEGL
 LIBS += -L$$DESTDIR

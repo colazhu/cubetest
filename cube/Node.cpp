@@ -621,7 +621,8 @@ uint32_t Node::processParentFlags(const Matrix & parentTransform, uint32_t paren
 //         _transformUpdated = _transformDirty = _inverseDirty = true;
 //     }
 
-    if (m_transformDirtys.testFlag(TransformDirty_ModelView)) {
+    if (flags) {
+        // LOG_BASE("[%s]update Transform:flg:%08x", m_name.c_str(), flags);
         m_transformMV = transform(parentTransform);
         m_transformDirtys.setFlag(TransformDirty_ModelView, false);
     }
@@ -682,6 +683,7 @@ void Node::render(const Matrix &parentTransform, uint32_t parentFlags) {
 }
 
 void Node::draw() {
+    // LOG_BASE("Draw:%s", m_name.c_str());
     onDraw();
 }
 
