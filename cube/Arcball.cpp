@@ -1,12 +1,12 @@
 #include "Arcball.h"
 #include "Log.h"
+
 Arcball::Arcball(float w, float h, float radius)
     : m_mode(MODE_FREE),
       m_dragged(false),
       m_radius(radius),
       m_prequaternion(Quaternion(0, 0, 0, 1)),
       m_curquaternion(Quaternion(0, 0, 0, 1)),
-      m_addquaternion(Quaternion(0, 0, 0, 1)),
       m_rotation_increament(Quaternion(0, 0, 0, 1)),
       m_prepoint(Vector3(0, 0, 0)),
       m_curpoint(Vector3(0, 0, 0)),
@@ -14,7 +14,6 @@ Arcball::Arcball(float w, float h, float radius)
       m_pretime(0),
       m_curtime(0)
 {
-    m_rotatematrix = Matrix::identity();
     setWindow(w, h) ;
 }
 
@@ -27,7 +26,6 @@ void Arcball::reset(const Quaternion& q)
     m_prequaternion = q;
     m_curquaternion = q;
     m_rotation_increament.identity();
-    Matrix::createRotation(q*m_addquaternion, &m_rotatematrix);
     m_dragged = false;
     m_radius = 1.0f;
     m_pretime = m_curtime = 0;
@@ -74,8 +72,14 @@ void Arcball::setWindow(float w, float h, float arcball_radius)
 
 Matrix Arcball::getRotationMatrix()
 {
-    Matrix::createRotation(m_curquaternion*m_addquaternion,&m_rotatematrix);
-    return m_rotatematrix;
+    Matrix matrix;
+    Matrix::createRotation(getRotationQuaternion(),&matrix);
+    return matrix;
+}
+
+Quaternion Arcball::getRotationQuaternion()
+{
+    return m_curquaternion;
 }
 
 Quaternion Arcball::getRotationQuatIncreament()
@@ -90,6 +94,14 @@ int Arcball::getTimeIncreament()
 
 Quaternion Arcball::quatFromBallPoints(Vector3& start_point, Vector3& end_point)
 {
+//    Vector3 start_point = start;
+//    Vector3 end_point = end;
+//    Matrix addmatrix;
+//    addmatrix.invert();
+//    Matrix::createRotation(m_addquaternion,&addmatrix);
+//    addmatrix.transformVector(&start_point);
+//    addmatrix.transformVector(&end_point);
+
     // Calculate rotate angle
     float angle = Vector3::dot(start_point,end_point);
 
@@ -97,16 +109,16 @@ Quaternion Arcball::quatFromBallPoints(Vector3& start_point, Vector3& end_point)
     Vector3 axis;
     switch (m_mode) {
     case MODE_HORIZONTAL:
-        Vector3::cross(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z),&axis);
+        Vector3::cross(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z), &axis);
         break;
     case MODE_VERTICAL:
-        Vector3::cross(Vector3(0,start_point.y,start_point.z),Vector3(0,end_point.y,end_point.z),&axis);
+        Vector3::cross(Vector3(0,start_point.y,start_point.z), Vector3(0,end_point.y,end_point.z), &axis);
         break;
     case MODE_HORIZONTAL_AND_VERTICAL:
-        if(Vector3::angle(Vector3(start_point.x,0,start_point.z),Vector3(end_point.x,0,end_point.z)) > Vector3::angle(Vector3(0,start_point.y,start_point.z),Vector3(0,end_point.y,end_point.z))) {
-            Vector3::cross(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z),&axis);
+        if(Vector3::angle(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z)) > Vector3::angle(Vector3(0,start_point.y,start_point.z), Vector3(0,end_point.y,end_point.z))) {
+            Vector3::cross(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z), &axis);
         } else {
-            Vector3::cross(Vector3(0,start_point.y,start_point.z),Vector3(0,end_point.y,end_point.z),&axis);
+            Vector3::cross(Vector3(0,start_point.y,start_point.z), Vector3(0,end_point.y,end_point.z), &axis);
         }
         break;
     case MODE_FREE:
@@ -115,17 +127,13 @@ Quaternion Arcball::quatFromBallPoints(Vector3& start_point, Vector3& end_point)
         break;
     }
 
-//    if(Vector3::angle(Vector3(start_point.x,0,start_point.z),Vector3(end_point.x,0,end_point.z)) > Vector3::angle(Vector3(0,start_point.y,start_point.z),Vector3(0,end_point.y,end_point.z))) {
-//        Vector3::cross(Vector3(start_point.x,0,start_point.z), Vector3(end_point.x,0,end_point.z),&axis);
-//    } else {
-//        Vector3::cross(Vector3(0,start_point.y,start_point.z),Vector3(0,end_point.y,end_point.z),&axis);
-//    }
-//    // or
-//    Vector3::cross( start_point, end_point,&axis);
+
+//    axis.normalize();
 
     // Build and Normalize the Quaternion
     Quaternion quat(axis.x, axis.y, axis.z, angle);
     quat.normalize();
+//    quat *= m_addquaternion;
     return quat;
 }
 

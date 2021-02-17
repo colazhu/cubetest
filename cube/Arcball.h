@@ -28,9 +28,8 @@ public:
     Quaternion getRotationQuatIncreament();
     int getTimeIncreament();
     void setWindow(float w, float h, float radius = 1.0f) ;
-    Quaternion getRotationQuaternion() {return m_curquaternion;}
+    Quaternion getRotationQuaternion();
     void setPreQuaternion(const Quaternion& q) {m_prequaternion = q;}
-    void setAddQuaternion(const Quaternion& q) {m_addquaternion = q;}
 private:
     ARCBALL_MODE m_mode;
 
@@ -42,13 +41,11 @@ private:
 
     Quaternion	m_prequaternion;        // quaternion before mouse down
     Quaternion	m_curquaternion;        // current quaternion
-    Quaternion  m_addquaternion;        // additional quaternion
     Quaternion	m_rotation_increament;	// rotation increment    
 
     Vector3		m_prepoint;             // starting point of arc ball rotate
     Vector3		m_curpoint;             // current point of arc ball rotate
     Vector3		m_oldpoint;             // old point
-    Matrix		m_rotatematrix;			// rotation matrix
 
     unsigned long m_pretime;
     unsigned long m_curtime;

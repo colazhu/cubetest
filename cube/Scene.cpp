@@ -13,24 +13,24 @@
 #define CHILD_PLANE "CubePlane"
 #define LIGHTCOLOR Color4F(0.8, 0.8, 0.8, 0.8)
 
-class RotateZTransition : public IntervalAction
-{
-public:
-    RotateZTransition(Node* node, float angle, float deltaAngle) : IntervalAction(node),
-        m_angle(angle),
-        m_deltaAngle(deltaAngle)
-    {}
+//class RotateZTransition : public IntervalAction
+//{
+//public:
+//    RotateZTransition(Node* node, float angle, float deltaAngle) : IntervalAction(node),
+//        m_angle(angle),
+//        m_deltaAngle(deltaAngle)
+//    {}
 
-    ~RotateZTransition() {}
+//    ~RotateZTransition() {}
 
-    virtual void onUpdate(Node* target, float dt, float time) {
-        // LOG_BASE("onUpdate:%p %.1f %.1f", target, dt, time);
-        target->setRotationZ(m_angle + m_deltaAngle * time);
-    }
+//    virtual void onUpdate(Node* target, float dt, float time) {
+//        // LOG_BASE("onUpdate:%p %.1f %.1f", target, dt, time);
+//        target->setRotationZ(m_angle + m_deltaAngle * time);
+//    }
 
-    float m_angle;
-    float m_deltaAngle;
-};
+//    float m_angle;
+//    float m_deltaAngle;
+//};
 
 Scene::Scene(const std::string& name):
     Node(name, 0),
@@ -122,8 +122,6 @@ void Scene::init()
 //    rect->setScale(1.0);
 
     rotateScene(225, 2000);
-
-
 }
 
 void Scene::deinit()
@@ -178,7 +176,7 @@ void Scene::onTouch(TouchAction touchevent, float x, float y)
         break;
     }
 
-    Matrix matrix = m_arcball->getRotationMatrix();
+    Matrix matrix = m_arcball->getRotationMatrix()* m_rotateMat;
     matrix.invert();
     cube->setAdditionalTransform(matrix);
     cube->onTouch(touchevent, x, y);
@@ -215,7 +213,7 @@ void Scene::onUpdate(float dt)
     if (m_flicking) {
         m_flickPreQuat = m_flickPreQuat * Quaternion(m_flickAxis, m_flickSpeed*dt);
         Matrix rotatematrix;
-        Matrix::createRotation(m_flickPreQuat, &rotatematrix);
+        Matrix::createRotation(m_flickPreQuat*m_rotateMat, &rotatematrix);
         rotatematrix.invert();
         Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
         cube->setAdditionalTransform(rotatematrix);
@@ -240,9 +238,10 @@ void Scene::flickCube(bool run)
         Quaternion dq = m_arcball->getRotationQuatIncreament();
         Vector3 axis;
         float radians = dq.toAxisAngle(&axis);
-        Matrix mat;
-        m_rotateMat.invert(&mat);
-        mat.transformVector(&axis);
+//        Matrix mat;
+//        m_rotateMat.invert(&mat);
+//        mat.transformVector(&axis);
+        // m_rotateMat.transformVector(&axis);
         int dt = m_arcball->getTimeIncreament();
         if (dt > 1 && radians > 0.01) {
             float speed = radians / (float)dt;
@@ -290,23 +289,11 @@ void Scene::gyroCube(int mode, bool forward, float ms)
 }
 
 void Scene::rotateScene(float degrees, float ms) {
-    Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
-    if (cube) {
-        cube->doRotateZ(degrees);
-    }
-
-     getCamera()->roll(degrees, ms);
-
-//    if (ms < 0.0f) {
-//        setRotationZ(getRotationZ() + degrees);    }
-//    else {
-//        RotateZTransition *action = new RotateZTransition(this, getRotationZ(), degrees);
-//        action->initTimeline(ms);
-//        runAction(action);
-//    }
 
     m_rotateMat.rotateZ(MATH_DEG_TO_RAD(degrees));
-    m_arcball->setAddQuaternion(m_rotateMat);
+
+    getCamera()->roll(degrees, ms);
+
     disableInTime(ms);
 }
 

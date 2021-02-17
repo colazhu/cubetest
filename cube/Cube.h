@@ -18,7 +18,6 @@ public:
     virtual bool onTestIntersection(const Vector3& orig, const Vector3& dir, Vector3& intersect);
 
     void setDummyMode(bool enable);
-    void doRotateZ(float degrees);
     void doGyro();
     void setPlaneTexture(int planeid, int txtid);
     
@@ -68,8 +67,6 @@ protected:
 
     int m_intersectVertexIdx;
     int m_intersectPlane;
-
-    Matrix m_matUserRotate;
 
     bool m_isDummy;
 };

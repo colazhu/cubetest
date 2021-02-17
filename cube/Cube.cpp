@@ -87,7 +87,7 @@ void Cube::onInitGeometryBuffer()
     //-------------- back --------------
     for (int i = offset; i < m_verticesPerPlane + offset; ++i) {
         m_vertices[i].normal.set(0, 0, -1);
-        m_vertices[i].colors = Color4F::BLACK;
+        m_vertices[i].colors = Color4F::GRAY;
     }
 
     for (int i = 0; i < m_stepsPerPlane; ++i) {
@@ -494,17 +494,6 @@ bool Cube::getIntersectPlaneVector(Vector3& normal, Vector3& up)
     normal = normalWorld.normalize();
     up = upWorld.normalize();
     return true;
-}
-
-
-void Cube::doRotateZ(float degrees)
-{
-    // for groy animation compute up vector
-    Matrix matCurUserRotate;
-    matCurUserRotate.rotateZ(-MATH_DEG_TO_RAD(degrees));
-    m_matUserRotate *= matCurUserRotate;
-
-    m_matUserRotate.rotateZ(-MATH_DEG_TO_RAD(degrees));
 }
 
 void Cube::doGyro()

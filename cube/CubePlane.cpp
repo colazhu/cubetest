@@ -95,7 +95,7 @@ void CubePlane::onDraw()
 
     ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position)
     // ENABLE_ATTR_NORMAL(V3F_N3F_T2F_C4F, Vector3, normal)
-    // ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords)
+    ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords)
     ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors)
 #endif
 
@@ -123,7 +123,6 @@ void CubePlane::syncTarget(Cube* cube)
     m_position  = cube->m_position;
 
     m_transformAdditional = cube->m_transformAdditional;
-    m_matUserRotate = cube->m_matUserRotate;
     m_intersectPlane = cube->m_intersectPlane;
     m_intersectVertexIdx = cube->m_intersectVertexIdx;
 
@@ -165,7 +164,7 @@ void CubePlane::doGyroZoomInTransition()
     Vector3 normalDst(0, 0, 1);
     Vector3 upDst(1, 0, 0);
     Matrix matUpDst;
-    matUpDst.rotateZ(MATH_DEG_TO_RAD(90));
+    matUpDst.rotateZ(-MATH_DEG_TO_RAD(90));
     matUpDst.transformVector(getCamera()->up(), &upDst);
     Vector3 normalSrc, upSrc;
     getIntersectPlaneVector(normalSrc, upSrc);
@@ -189,7 +188,7 @@ void CubePlane::doGyroZoomInTransition()
     m_transition->m_position[0] = m_position;
     Camera* camera = director->currentCamera(); // camera must fix at z and look to -z
     float distEye = (0.5*m_scale.y / std::tan(MATH_DEG_TO_RAD(camera->fieldOfView()/2.0f)));
-    m_transition->m_position[1] = Vector3(0, 0, camera->eye().z - distEye - 0.5*m_scale.z - 0.1);
+    m_transition->m_position[1] = Vector3(0, 0, camera->eye().z - distEye - 0.5*m_scale.z);
 
     Rect winSize = director->getWindowSize();
     m_transition->m_scale[1] = m_transition->m_scale[0] = m_scale;
