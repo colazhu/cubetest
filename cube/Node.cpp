@@ -464,24 +464,37 @@ bool Node::screenCoorToRayInWorldTransform(const Vector2& position, Vector3* ori
     if (!orig || !dir) {
         return false;
     }
+    Camera* camera = getCamera();
+    if (!camera) {
+        return false;
+    }
 
-    Rect viewport = getCamera()->viewPort();
+    Quaternion q;
+    *orig = camera->eye();
+    Rect viewport = camera->viewPort();
     Vector3 cameraDir_in_camera(0, 0, -1);
     Vector3 rayDir_in_camera;
-    rayDir_in_camera.z = (-(0.5f * viewport.size.height) / tanf(MATH_DEG_TO_RAD(getCamera()->fieldOfView() / 2.0f)));
+    rayDir_in_camera.z = (-(0.5f * viewport.size.height) / tanf(MATH_DEG_TO_RAD(camera->fieldOfView() / 2.0f)));
     rayDir_in_camera.x = (position.x - 0.5f * viewport.size.width);
     rayDir_in_camera.y = (0.5f * viewport.size.height - position.y);
 
-    Vector3 cameraDir_in_world = getCamera()->direction();
-    Vector3 axis;
-    Vector3::cross(cameraDir_in_camera, cameraDir_in_world, &axis);
-    float dx = cameraDir_in_camera.y * cameraDir_in_world.z - cameraDir_in_camera.z * cameraDir_in_world.y;
-    float dy = cameraDir_in_camera.z * cameraDir_in_world.x - cameraDir_in_camera.x * cameraDir_in_world.z;
-    float dz = cameraDir_in_camera.x * cameraDir_in_world.y - cameraDir_in_camera.y * cameraDir_in_world.x;
-    float angle = atan2f(sqrt(dx * dx + dy * dy + dz * dz) + MATH_FLOAT_SMALL, Vector3::dot(cameraDir_in_camera, cameraDir_in_world));
+    Vector3 cameraDir_in_world = camera->direction();
 
-    *orig = getCamera()->eye();
-    Quaternion(axis, angle).rotatePoint(rayDir_in_camera, dir);
+    float angleDir = Vector3::angle(cameraDir_in_camera, cameraDir_in_world);
+    Vector3 axisDir;
+    Vector3::cross(cameraDir_in_camera, cameraDir_in_world, &axisDir);
+    q *=Quaternion(axisDir, angleDir);
+
+
+    Vector3 cameraUp_in_camera(0, 1, 0);
+    Vector3 cameraUp_in_world = camera->up();
+
+    float angleUp = Vector3::angle(cameraUp_in_camera, cameraUp_in_world);
+    Vector3 axisUp;
+    Vector3::cross(cameraUp_in_camera, cameraUp_in_world, &axisUp);
+    q *=Quaternion(axisUp, angleUp);
+
+    q.rotatePoint(rayDir_in_camera, dir);
     return true;
 }
 

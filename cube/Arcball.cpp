@@ -3,13 +3,14 @@
 Arcball::Arcball(float w, float h, float radius)
     : m_mode(MODE_FREE),
       m_dragged(false),
-      m_radius(1.0f),
+      m_radius(radius),
+      m_prequaternion(Quaternion(0, 0, 0, 1)),
+      m_curquaternion(Quaternion(0, 0, 0, 1)),
+      m_addquaternion(Quaternion(0, 0, 0, 1)),
+      m_rotation_increament(Quaternion(0, 0, 0, 1)),
       m_prepoint(Vector3(0, 0, 0)),
       m_curpoint(Vector3(0, 0, 0)),
       m_oldpoint(Vector3(0, 0, 0)),
-      m_prequaternion(Quaternion(0, 0, 0, 1)),
-      m_curquaternion(Quaternion(0, 0, 0, 1)),
-      m_rotation_increament(Quaternion(0, 0, 0, 1)),
       m_pretime(0),
       m_curtime(0)
 {
@@ -26,7 +27,7 @@ void Arcball::reset(const Quaternion& q)
     m_prequaternion = q;
     m_curquaternion = q;
     m_rotation_increament.identity();
-    Matrix::createRotation(q, &m_rotatematrix);
+    Matrix::createRotation(q*m_addquaternion, &m_rotatematrix);
     m_dragged = false;
     m_radius = 1.0f;
     m_pretime = m_curtime = 0;
@@ -51,8 +52,8 @@ void Arcball::onMove(float mouse_x, float mouse_y)
     if(m_dragged)
     {
         m_curpoint = screenToVector(mouse_x, mouse_y) ;
-        m_rotation_increament = quatFromBallPoints(m_oldpoint, m_curpoint );
-        m_curquaternion = m_prequaternion * quatFromBallPoints( m_prepoint, m_curpoint ) ;
+        m_rotation_increament = quatFromBallPoints(m_oldpoint, m_curpoint);
+        m_curquaternion = m_prequaternion * quatFromBallPoints(m_prepoint, m_curpoint);
         m_oldpoint = m_curpoint;
         m_pretime = m_curtime;
         m_curtime = Log::tickCount();
@@ -73,13 +74,13 @@ void Arcball::setWindow(float w, float h, float arcball_radius)
 
 Matrix Arcball::getRotationMatrix()
 {
-    Matrix::createRotation(m_curquaternion,&m_rotatematrix);
+    Matrix::createRotation(m_curquaternion*m_addquaternion,&m_rotatematrix);
     return m_rotatematrix;
 }
 
 Quaternion Arcball::getRotationQuatIncreament()
 {
-    return m_rotation_increament ;
+    return m_rotation_increament;
 }
 
 int Arcball::getTimeIncreament()

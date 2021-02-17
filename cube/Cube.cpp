@@ -504,6 +504,7 @@ void Cube::doRotateZ(float degrees)
     matCurUserRotate.rotateZ(-MATH_DEG_TO_RAD(degrees));
     m_matUserRotate *= matCurUserRotate;
 
+    m_matUserRotate.rotateZ(-MATH_DEG_TO_RAD(degrees));
 }
 
 void Cube::doGyro()
@@ -514,7 +515,8 @@ void Cube::doGyro()
 
     Vector3 normalDst(0, 0, 1);    
     Vector3 upDst(0, 1, 0);
-    m_matUserRotate.transformVector(&upDst);
+    upDst = getCamera()->up();
+//    m_matUserRotate.transformVector(&upDst);
     Vector3 normalSrc, upSrc;
     getIntersectPlaneVector(normalSrc, upSrc);
 

@@ -182,17 +182,6 @@ void Camera::moveDown(float step)
     moveUp(-step);
 }
 
-void Camera::roll(float degrees)
-{
-    return; // todo
-    Matrix matrixRoll;
-    Matrix::createRotation(m_dir, MATH_DEG_TO_RAD(degrees),&matrixRoll);
-    matrixRoll.transformVector(&m_up);
-    m_up.normalize();
-    LOG_BASE("roll: up:%.2f %.2f %.2f", m_up.x, m_up.y, m_up.z);
-    notifyCameraChanged();
-}
-
 class CameraTransitionRoll : public IntervalAction
 {
 public:
@@ -224,12 +213,21 @@ public:
     float m_radius;
 };
 
-void Camera::rollInTime(float degrees, float ms)
+void Camera::roll(float degrees, float ms)
 {
-    return; // todo touch error
-    CameraTransitionRoll* rolltrans = new CameraTransitionRoll(this, m_dir, m_up, MATH_DEG_TO_RAD(degrees));
-    rolltrans->initTimeline(ms, true);
-    runAction(rolltrans);
+    if (ms < 0.0f) {
+        Matrix matrixRoll;
+        Matrix::createRotation(m_dir, MATH_DEG_TO_RAD(degrees), &matrixRoll);
+        matrixRoll.transformVector(&m_up);
+        m_up.normalize();
+        LOG_BASE("roll: up:%.2f %.2f %.2f", m_up.x, m_up.y, m_up.z);
+        notifyCameraChanged();
+    }
+    else {
+        CameraTransitionRoll* rolltrans = new CameraTransitionRoll(this, m_dir, m_up, MATH_DEG_TO_RAD(degrees));
+        rolltrans->initTimeline(ms, true);
+        runAction(rolltrans);
+    }
 }
 
 void Camera::updateTransform()

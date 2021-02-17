@@ -88,10 +88,8 @@ public:
     void moveBackward(float step = 1.0f);
     void moveUp(float step = 1.0f);
     void moveDown(float step = 1.0f);
-    /* degrees > 0 roll clockwise */
-    void roll(float degrees);
     /* degrees > 0 roll clockwise  */
-    void rollInTime(float degrees, float ms);
+    void roll(float degrees, float ms = -1.0f);
     void restore();
 
     void notifyCameraChanged();

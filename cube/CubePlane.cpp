@@ -123,7 +123,7 @@ void CubePlane::syncTarget(Cube* cube)
     m_position  = cube->m_position;
 
     m_transformAdditional = cube->m_transformAdditional;
-
+    m_matUserRotate = cube->m_matUserRotate;
     m_intersectPlane = cube->m_intersectPlane;
     m_intersectVertexIdx = cube->m_intersectVertexIdx;
 
@@ -164,6 +164,9 @@ void CubePlane::doGyroZoomInTransition()
 
     Vector3 normalDst(0, 0, 1);
     Vector3 upDst(1, 0, 0);
+    Matrix matUpDst;
+    matUpDst.rotateZ(MATH_DEG_TO_RAD(90));
+    matUpDst.transformVector(getCamera()->up(), &upDst);
     Vector3 normalSrc, upSrc;
     getIntersectPlaneVector(normalSrc, upSrc);
 

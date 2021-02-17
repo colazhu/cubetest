@@ -42,6 +42,7 @@ protected:
     float m_flickSpeed;
     Vector3 m_flickAxis;
     Quaternion m_flickPreQuat;
+    Matrix m_rotateMat;
 };
 
 #endif // SCENE_H

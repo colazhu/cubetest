@@ -120,6 +120,10 @@ void Scene::init()
 //    RectNode* rect = new RectNode("TestRect", this);
 //    rect->initGeometryBuffer();
 //    rect->setScale(1.0);
+
+    rotateScene(225, 2000);
+
+
 }
 
 void Scene::deinit()
@@ -190,9 +194,9 @@ void Scene::onGesture(const GestureEvent& ev)
     case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
     {
         LOG_BASE("COMMON_GESTURE_TYPE_DOUBLECLICK gyroCube");
-//        gyroCube(m_gyroMode, m_isCubeMode, 2000);
-//        m_isCubeMode = !m_isCubeMode;
-        rotateScene(90, 1000);
+        gyroCube(m_gyroMode, m_isCubeMode, 2000);
+        m_isCubeMode = !m_isCubeMode;
+        // rotateScene(90, 1000);
     }
         break;
     case WL_COMMON_GESTURE_TYPE_FLICK:
@@ -236,6 +240,9 @@ void Scene::flickCube(bool run)
         Quaternion dq = m_arcball->getRotationQuatIncreament();
         Vector3 axis;
         float radians = dq.toAxisAngle(&axis);
+        Matrix mat;
+        m_rotateMat.invert(&mat);
+        mat.transformVector(&axis);
         int dt = m_arcball->getTimeIncreament();
         if (dt > 1 && radians > 0.01) {
             float speed = radians / (float)dt;
@@ -279,7 +286,7 @@ void Scene::gyroCube(int mode, bool forward, float ms)
         plane->doBack();
     }
 
-     disableInTime(ms * 0.5);
+     disableInTime(ms);
 }
 
 void Scene::rotateScene(float degrees, float ms) {
@@ -288,15 +295,18 @@ void Scene::rotateScene(float degrees, float ms) {
         cube->doRotateZ(degrees);
     }
 
-    if (ms < 0.0f) {
-        setRotationZ(getRotationZ() + degrees);
-    }
-    else {
-        RotateZTransition *action = new RotateZTransition(this, getRotationZ(), degrees);
-        action->initTimeline(ms);
-        runAction(action);
-    }
+     getCamera()->roll(degrees, ms);
 
+//    if (ms < 0.0f) {
+//        setRotationZ(getRotationZ() + degrees);    }
+//    else {
+//        RotateZTransition *action = new RotateZTransition(this, getRotationZ(), degrees);
+//        action->initTimeline(ms);
+//        runAction(action);
+//    }
+
+    m_rotateMat.rotateZ(MATH_DEG_TO_RAD(degrees));
+    m_arcball->setAddQuaternion(m_rotateMat);
     disableInTime(ms);
 }
 
