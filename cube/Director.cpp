@@ -70,6 +70,7 @@ public:
       lastTickCount(0),
       inited(false),
       paused(false),
+      layout(LAYOUT_FULL_PORTRAIT),
       winSize(0, 0, 800, 480),
       curcamera(0),
       curscene(0)
@@ -86,11 +87,11 @@ public:
     unsigned long lastTickCount;
     bool inited;
     bool paused;
+    int layout;
 
     Rect winSize;
     MatrixStack matrixStack;
     MouseState mouseState;
-
 
     TextureCache textureCache;
     ProgramCache programCache;
@@ -245,6 +246,26 @@ void Director::rotateCube(float degrees, float ms)
     if (currentScene()) {
         currentScene()->rotateScene(degrees, ms);
     }
+}
+
+void Director::setMode(int mode)
+{
+    if (currentScene()) {
+        currentScene()->setGyroMode(mode);
+    }
+}
+
+void Director::setLayout(int layout)
+{
+    m_data->layout = layout;
+    if (currentScene()) {
+        currentScene()->setLayout(layout);
+    }
+}
+
+int Director::getLayout()
+{
+    return m_data->layout;
 }
 
 void Director::injectTouch(const TouchEvent& event)

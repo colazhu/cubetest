@@ -21,19 +21,20 @@ public:
 
     void updateArcball();
 
-    enum GYROMODE_TYPE {
-        GYROMODE_ONE,
-        GYROMODE_TWO
-    };
+    void setLayout(int layout);
 
-    void setMode(int mode);
+    enum GYROMODE_TYPE {
+         GYROMODE_ONE,
+         GYROMODE_TWO
+    };
+    void setGyroMode(int mode);
     void flickCube(bool run = true);
-    void gyroCube(int mode, bool forward, float ms);
     void rotateScene(float degrees, float ms = -1.0f);
     void setCubePlaneTexture(int planeid, int txtid);
 
 protected:    
     void disableInTime(float ms);
+    void gyroCube(int mode, bool forward, float ms);
     Arcball* m_arcball;
     int m_gyroMode;
     bool m_enable;

@@ -58,11 +58,12 @@ protected:
     V3F_N3F_T2F_C4F* m_vertices;
 
     struct PlaneInfo {
-        Texture* texture;
+        // Texture* texture;
         Vector3 normal;
         Vector3 up;
         int verticesStart;
         int verticesCount;
+        int textureId;
     } m_planeInfos[PLANE_NUM];
 
     int m_intersectVertexIdx;

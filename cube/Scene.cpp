@@ -11,31 +11,12 @@
 #define CUBE_SCALE 6.0f
 #define CHILD_CUBE "Cube"
 #define CHILD_PLANE "CubePlane"
-#define LIGHTCOLOR Color4F(0.8, 0.8, 0.8, 0.8)
-
-//class RotateZTransition : public IntervalAction
-//{
-//public:
-//    RotateZTransition(Node* node, float angle, float deltaAngle) : IntervalAction(node),
-//        m_angle(angle),
-//        m_deltaAngle(deltaAngle)
-//    {}
-
-//    ~RotateZTransition() {}
-
-//    virtual void onUpdate(Node* target, float dt, float time) {
-//        // LOG_BASE("onUpdate:%p %.1f %.1f", target, dt, time);
-//        target->setRotationZ(m_angle + m_deltaAngle * time);
-//    }
-
-//    float m_angle;
-//    float m_deltaAngle;
-//};
+#define LIGHTCOLOR Color4F(1.0, 1.0, 1.0, 1.0)
 
 Scene::Scene(const std::string& name):
     Node(name, 0),
     m_arcball(0),
-    m_gyroMode(GYROMODE_ONE),
+    m_gyroMode(GYROMODE_TWO),
     m_enable(true),
     m_isCubeMode(true),
     m_flicking(false)
@@ -64,14 +45,14 @@ void Scene::init()
     cb_light0->setScale(1);
     cb_light0->setPosition(Vector3(-posscale*0.8*CUBE_SCALE, -posscale*0.5*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
     cb_light0->setDummyMode(true);
-//    cb_light0->hide();
+    cb_light0->hide();
 
     Cube* cb_light1 = new Cube("cb_light1", 1, this);
     cb_light1->initGeometryBuffer();
     cb_light1->setScale(1);
     cb_light1->setPosition(Vector3(posscale*0.8*CUBE_SCALE, -posscale*0.5*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
     cb_light1->setDummyMode(true);
-//    cb_light1->hide();
+    cb_light1->hide();
 
 //    Cube* cb_light2 = new Cube("cb_light2", this);
 //    cb_light2->initGeometryBuffer();
@@ -98,13 +79,12 @@ void Scene::init()
 //    pointlight2->setIntensity(5);
 //    lightcache.addLight(LIGHT_ID_02, pointlight2);
 
-//    lightcache.setFog(Vector4(0.0, 0, 0, 1.0), 25, 1.0);
+    lightcache.setFog(Vector4(0.0, 0, 0, 1.0), 25, 1.0);
     lightcache.useFog(true);
 
     Cube* cube = new Cube(CHILD_CUBE, 10, this);
     cube->initGeometryBuffer();
     cube->setScale(CUBE_SCALE);
-    // cube->doRotateZ(90);
     // cube->hide();
 
     CubePlane* cubeplane = new CubePlane(CHILD_PLANE, this);
@@ -121,7 +101,7 @@ void Scene::init()
 //    rect->initGeometryBuffer();
 //    rect->setScale(1.0);
 
-    rotateScene(225, 2000);
+//    rotateScene(225, 2000);
 }
 
 void Scene::deinit()
@@ -129,9 +109,17 @@ void Scene::deinit()
 
 }
 
-void Scene::setMode(int mode)
+void Scene::setGyroMode(int mode)
 {
     m_gyroMode = mode;
+}
+
+void Scene::setLayout(int layout)
+{
+//    CubePlane* plane = static_cast<CubePlane*>(getChild(CHILD_PLANE));
+//    if (plane) {
+//        plane->setLayout(layout);
+//    }
 }
 
 void Scene::updateArcball()

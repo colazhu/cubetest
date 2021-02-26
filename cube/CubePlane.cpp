@@ -99,10 +99,28 @@ void CubePlane::onDraw()
     ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors)
 #endif
 
+    int layout = Director::instance()->getLayout();
+
     for (int i = 0; i < PLANE_NUM; ++i) {
         if (i == m_intersectPlane) {
-            if (m_planeInfos[i].texture) {
-                m_planeInfos[i].texture->bind();
+            int offset = 0;
+            switch (layout) {
+            case LAYOUT_HALF_LEFT:
+            case LAYOUT_HALF_RIGHT:
+                offset = 0;
+                break;
+            case LAYOUT_FULL_PORTRAIT:
+                offset = 1;
+                break;
+            case LAYOUT_FULL_LANDSCAPE:
+                offset = 2;
+                break;
+            default:
+                break;
+            }
+
+            if (Texture* txt = Director::instance()->textureCache().getTexture(m_planeInfos[i].textureId + offset)) {
+                txt->bind();
             }
             GLHook::glDrawArrays(GL_TRIANGLES, i * m_verticesPerPlane, m_verticesPerPlane);
         }

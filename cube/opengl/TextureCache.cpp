@@ -127,7 +127,7 @@ Texture* TextureCache::addImage(const std::string &keyname, int gltxtid, int w, 
      
     Texture* txt = new Texture(gltxtid, w, h);
     m_textures[keyname] = txt;
-    LOG_BASE("addImage:%s %d", keyname.c_str(), gltxtid);
+    LOG_BASE("addImage:%s %d w:%d h:%d", keyname.c_str(), gltxtid, w, h);
     return txt;
 }
 
