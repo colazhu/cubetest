@@ -202,6 +202,7 @@ void Director::resume()
 
 bool Director::loop()
 {
+    // LOG_BASE("loop");
     GestureManager::instance()->update();
 
     if (0 == m_data->lastTickCount) {

@@ -15,13 +15,19 @@
 #include "twoLongPressGesture.h"
 #include "twoTapGesture.h"
 #include "multiLongPressGesture.h"
+#include <sys/syscall.h>
+#include <sys/time.h>
 
 unsigned long GestureCommonFun::currentTime()
 {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    unsigned long curTime = (tv.tv_sec * 1000000 + tv.tv_usec)/1000;
-    return curTime;
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    return time.tv_sec * 1000 + time.tv_nsec / 1000000;
+
+//    struct timeval tv;
+//    gettimeofday(&tv, NULL);
+//    unsigned long curTime = (tv.tv_sec * 1000000 + tv.tv_usec)/1000;
+//    return curTime;
 }
 
 GESTURE_TYPE GestureCommonFun::gestureTypeConvert(WL_GESTURE_CLASS gclass, int separateType)

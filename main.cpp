@@ -109,7 +109,7 @@ void framebuffsize_callback(GLFWwindow* window, int width, int height) {
 
 void mouse_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    printf("\n mouse_callback :%p button:%d action:%d mods:%d +++ \n", window, button, action, mods);
+    // printf("\n mouse_callback :%p button:%d action:%d mods:%d +++ \n", window, button, action, mods);
     enum {
         MOUSEBUTTON_LEFT = 0,
         MOUSEBUTTON_RIGHT,
@@ -155,7 +155,7 @@ void mouse_callback(GLFWwindow* window, int button, int action, int mods)
         return;
     }
     onMouseEvent(s_mouseevent);
-    printf("\n mouse_callback --- \n");
+    // printf("\n mouse_callback --- \n");
 }
 
 void cursorenter_callback(GLFWwindow* window, int enter)
@@ -201,7 +201,7 @@ void cursorpos_callback(GLFWwindow* window, double x, double y)
         && !s_mouseevent.status.testFlag(MOUSE_MIDDLE)) {
         return;
     }
-    printf("\n cursorpos_callback :%p x:%d y:%d \n", window, s_mouseevent.x, s_mouseevent.y);
+    // printf("\n cursorpos_callback :%p x:%d y:%d \n", window, s_mouseevent.x, s_mouseevent.y);
     s_mouseevent.event = MOUSE_MOVE;
     onMouseEvent(s_mouseevent);
 }
@@ -258,8 +258,8 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
     return window;
 }
 
-#define DEFAULT_SIZE_WIDTH (2560)
-#define DEFAULT_SIZE_HEIGTH (1440)
+#define DEFAULT_SIZE_WIDTH (1280)
+#define DEFAULT_SIZE_HEIGTH (720)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 

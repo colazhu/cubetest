@@ -176,10 +176,13 @@ void Scene::onGesture(const GestureEvent& ev)
         return;
     }
 
+#define PRINT_GESTRUE(GETSTURE_NAME) \
+    case GETSTURE_NAME: { LOG_BASE(#GETSTURE_NAME); break; }
+
     switch(ev.gtype) {
     case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
     {
-        LOG_BASE("COMMON_GESTURE_TYPE_DOUBLECLICK gyroCube");
+        LOG_BASE("WL_COMMON_GESTURE_TYPE_DOUBLECLICK");
         gyroCube(m_gyroMode, m_isCubeMode, 2000);
         m_isCubeMode = !m_isCubeMode;
         // rotateScene(90, 1000);
@@ -187,10 +190,19 @@ void Scene::onGesture(const GestureEvent& ev)
         break;
     case WL_COMMON_GESTURE_TYPE_FLICK:
     {
-        LOG_BASE("COMMON_GESTURE_TYPE_FLICK flickCube");
+        LOG_BASE("WL_COMMON_GESTURE_TYPE_FLICK");
         flickCube(true);
     }
         break;
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_TAP)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DRAG)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_PINCH)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2FLICK)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2ROTARY)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2DRAG)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2LONGPRESS)
+    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2TAP)
     default:
         break;
     }
