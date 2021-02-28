@@ -21,7 +21,7 @@ public:
     }
 
     virtual void onUpdate(Node* target, float dt, float time) {
-        LOG_BASE("onUpdate:%p %.1f %.1f", target, dt, time);
+        // LOG_BASE("onUpdate:%p %.1f %.1f", target, dt, time);
         Matrix matRotate1, matRotate2;
         matRotate1.rotate(Quaternion(m_normalAsix, m_normalAngle * time));
         matRotate2.rotate(Quaternion(m_upAsix, m_upAngle * time));
@@ -105,8 +105,8 @@ void CubePlane::onDraw()
         if (i == m_intersectPlane) {
             int offset = 0;
             switch (layout) {
-            case LAYOUT_HALF_LEFT:
-            case LAYOUT_HALF_RIGHT:
+            case LAYOUT_HALF_PORTRAIT:
+            case LAYOUT_HALF_LANDSCAPE:
                 offset = 0;
                 break;
             case LAYOUT_FULL_PORTRAIT:
@@ -178,11 +178,24 @@ void CubePlane::doGyroZoomInTransition()
     }
 
     Director* director = Director::instance();
+    Rect winSize = director->getWindowSize();
+    float ratio = 1.0f;
+    int layout = director->getLayout();
+    switch (layout) {
+    case LAYOUT_FULL_PORTRAIT:
+    case LAYOUT_FULL_LANDSCAPE:
+        ratio = winSize.size.width/winSize.size.height;
+        break;
+    default:
+        break;
+    } 
 
     Vector3 normalDst(0, 0, 1);
     Vector3 upDst(1, 0, 0);
     Matrix matUpDst;
-    matUpDst.rotateZ(-MATH_DEG_TO_RAD(90));
+    if (LAYOUT_FULL_PORTRAIT == layout || LAYOUT_HALF_PORTRAIT == layout) {
+        matUpDst.rotateZ(-MATH_DEG_TO_RAD(90));
+    }
     matUpDst.transformVector(getCamera()->up(), &upDst);
     Vector3 normalSrc, upSrc;
     getIntersectPlaneVector(normalSrc, upSrc);
@@ -205,19 +218,28 @@ void CubePlane::doGyroZoomInTransition()
     m_transition->m_upAngle = upAngle;
     m_transition->m_position[0] = m_position;
     Camera* camera = director->currentCamera(); // camera must fix at z and look to -z
-    float distEye = (0.5*m_scale.y / std::tan(MATH_DEG_TO_RAD(camera->fieldOfView()/2.0f)));
-    m_transition->m_position[1] = Vector3(0, 0, camera->eye().z - distEye - 0.5*m_scale.z);
 
-    Rect winSize = director->getWindowSize();
+    float distEye = (0.5*m_scale.y / std::tan(MATH_DEG_TO_RAD(camera->fieldOfView()/2.0f)));
+  
+    m_transition->m_position[1] = Vector3(0, 0, camera->eye().z - distEye - 0.5*m_scale.z);   
     m_transition->m_scale[1] = m_transition->m_scale[0] = m_scale;
-    if (PLANE_UP == m_intersectPlane ||
-            PLANE_DOWN == m_intersectPlane) {
-        m_transition->m_scale[1].z = m_transition->m_scale[1].z*winSize.size.width/winSize.size.height;
+    if (LAYOUT_FULL_PORTRAIT == layout || LAYOUT_HALF_PORTRAIT == layout) {
+        if (PLANE_UP == m_intersectPlane || PLANE_DOWN == m_intersectPlane) {        
+            m_transition->m_scale[1].z = m_transition->m_scale[1].z*ratio;
+        }
+        else {
+            m_transition->m_scale[1].y = m_transition->m_scale[1].y*ratio;
+        }
     }
     else {
-        m_transition->m_scale[1].y = m_transition->m_scale[1].y*winSize.size.width/winSize.size.height;
+        if (PLANE_LEFT == m_intersectPlane || PLANE_RIGHT == m_intersectPlane) {        
+            m_transition->m_scale[1].z = m_transition->m_scale[1].z*ratio;
+        }
+        else {
+            m_transition->m_scale[1].x = m_transition->m_scale[1].x*ratio;
+        }
     }
-    //
+    
     m_transition->initTimeline(1000.0, true, m_target ? Expo_EaseOut : Expo_EaseInOut);
     runAction(m_transition);
 }

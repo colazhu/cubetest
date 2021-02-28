@@ -39,9 +39,9 @@ Cube::Cube(const std::string& name, int stepsPerPlane, Node* parent):
 {
     m_vertices = new V3F_N3F_T2F_C4F[m_verticesNum];
     Vector4 color(180.0/255.0, 180.0/255.0, 180.0/255.0, 180.0/255.0);
-    m_material.setAmbient(Color4F(25.0/255.0, 25.0/255.0, 25.0/255.0, 25.0/255.0));
+    m_material.setAmbient(color * 0.8);
     m_material.setDiffuse(color * 0.5);
-    m_material.setSpecular(color * 1.8, 0.5);
+    m_material.setSpecular(color * 2.0, 0.5);
 //    m_material.setEmssion(Color4F(25.0/255.0, 25.0/255.0, 25.0/255.0, 25.0/255.0));
 }
 
@@ -225,7 +225,7 @@ void Cube::onInitGeometryBuffer()
             m_vertices[1+offset].position.set(1, offset_i + stepSize, -offset_j); // left-top
             m_vertices[1+offset].texCoords = Tex2F(offset_j, 1.0 - offset_i - stepSize);
             m_vertices[2+offset].position.set(1, offset_i + stepSize, -(offset_j + stepSize)); // right-top
-            m_vertices[2+offset].texCoords = Tex2F(offset_j - stepSize, 1.0 - offset_i - stepSize);
+            m_vertices[2+offset].texCoords = Tex2F(offset_j + stepSize, 1.0 - offset_i - stepSize);
             m_vertices[3+offset].position.set(m_vertices[0+offset].position); // left-bottom
             m_vertices[3+offset].texCoords = m_vertices[0+offset].texCoords;
             m_vertices[4+offset].position.set(m_vertices[2+offset].position); // right-top
@@ -356,7 +356,7 @@ void Cube::onDraw()
     }
     else {
         drawCube();
-//        drawIntersection();
+        drawIntersection();
     }
 }
 
@@ -420,7 +420,7 @@ void Cube::drawCube()
 
     for (int i = 0; i < PLANE_NUM; ++i) {
         if (Texture* txt = Director::instance()->textureCache().getTexture(m_planeInfos[i].textureId)) {
-            txt->bind();
+            txt->bind(true);
         }
         GLHook::glDrawArrays(GL_TRIANGLES, i * m_verticesPerPlane, m_verticesPerPlane);
     }

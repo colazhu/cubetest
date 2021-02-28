@@ -70,7 +70,7 @@ public:
       lastTickCount(0),
       inited(false),
       paused(false),
-      layout(LAYOUT_FULL_PORTRAIT),
+      layout(LAYOUT_HALF_LANDSCAPE),
       winSize(0, 0, 800, 480),
       curcamera(0),
       curscene(0)
@@ -202,7 +202,6 @@ void Director::resume()
 
 bool Director::loop()
 {
-    // LOG_BASE("loop");
     GestureManager::instance()->update();
 
     if (0 == m_data->lastTickCount) {

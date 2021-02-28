@@ -3,7 +3,7 @@
 
 #include "gestureDef.h"
 #include "gesturePublicDef.h"
-
+#include "Log.h"
 
 #define PI 3.1415926
 

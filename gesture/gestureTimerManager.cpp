@@ -11,7 +11,7 @@ struct TimerInfo{
     bool pendingDel;
 
     void reset(int _interval) {
-        interval = 0;
+        interval = _interval;
         elapsed = 0;
 
     }
@@ -80,6 +80,7 @@ int GestureTimerManager::registerTimer(FUNC_TIMEOUT func, void* data)
     for (int i = 0; i < TimerMax; ++i) {
         if (!mTimers[i]) {
             mTimers[i] = new TimerInfo({s_seeds, 0, 0, data, func, false});
+            break;
         }
     }
 

@@ -54,6 +54,7 @@ GestureTimerPrivate::~GestureTimerPrivate()
 
 int GestureTimerPrivate::timeOut(void* data)
 {
+    // LOG_BASE("onTimeout");
 	if (!data) {
 		return -1;
 	}

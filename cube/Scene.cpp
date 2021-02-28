@@ -178,11 +178,11 @@ void Scene::onGesture(const GestureEvent& ev)
 
 #define PRINT_GESTRUE(GETSTURE_NAME) \
     case GETSTURE_NAME: { LOG_BASE(#GETSTURE_NAME); break; }
-
+    
     switch(ev.gtype) {
     case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
     {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_DOUBLECLICK");
+        LOG_BASE("COMMON_GESTURE_TYPE_DOUBLECLICK gyroCube");
         gyroCube(m_gyroMode, m_isCubeMode, 2000);
         m_isCubeMode = !m_isCubeMode;
         // rotateScene(90, 1000);
@@ -190,7 +190,7 @@ void Scene::onGesture(const GestureEvent& ev)
         break;
     case WL_COMMON_GESTURE_TYPE_FLICK:
     {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_FLICK");
+        LOG_BASE("COMMON_GESTURE_TYPE_FLICK flickCube");
         flickCube(true);
     }
         break;
