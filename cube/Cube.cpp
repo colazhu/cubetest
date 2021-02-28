@@ -35,7 +35,8 @@ Cube::Cube(const std::string& name, int stepsPerPlane, Node* parent):
     m_verticesPerPlane(VERTICES_PER_CELL * stepsPerPlane* stepsPerPlane),
     m_verticesNum(PLANE_NUM * VERTICES_PER_CELL * stepsPerPlane* stepsPerPlane),
     m_vertices(NULL),
-    m_isDummy(false)
+    m_isDummy(false),
+    m_touchDownPlane(-1)
 {
     m_vertices = new V3F_N3F_T2F_C4F[m_verticesNum];
     Vector4 color(180.0/255.0, 180.0/255.0, 180.0/255.0, 180.0/255.0);
@@ -334,9 +335,11 @@ void Cube::onTouch(TouchAction touchevent, float x, float y)
             getIntersectPlaneVector(normalSrc, upSrc);
             LOG_BASE("Test Intersection:%.1lf, %.1lf %d %d", x, y, m_intersectVertexIdx, m_intersectPlane);
             LOG_BASE("Test plane normal: %.1lf, %.1lf %.1lf", normalSrc.x, normalSrc.y, normalSrc.z);
-
-
-            // doTransition();
+            m_touchDownPlane = m_intersectPlane;
+        }
+        else {
+            LOG_BASE("Test intersect plane None!!!");
+            m_touchDownPlane = -1;
         }
         break;
     case TouchAction_Move:
@@ -552,4 +555,39 @@ void Cube::setPlaneTexture(int planeid, int txtid) {
 //        return;
 //    }
 //    m_planeInfos[planeid].texture = txt;
+}
+
+int Cube::getLastTouchDownPlane()
+{
+    return m_touchDownPlane;
+}
+
+int Cube::getIntersectPlane()
+{
+    return m_intersectPlane;
+}
+
+int Cube::getPlaneTexture(int planeid)
+{
+    if (planeid < PLANE_FRONT || planeid >= PLANE_NUM ) {
+        return -1;
+    }
+
+    int layout = Director::instance()->getLayout();
+    int offset = 0;
+    switch (layout) {
+    case LAYOUT_HALF_PORTRAIT:
+    case LAYOUT_HALF_LANDSCAPE:
+        offset = 0;
+        break;
+    case LAYOUT_FULL_PORTRAIT:
+        offset = 1;
+        break;
+    case LAYOUT_FULL_LANDSCAPE:
+        offset = 2;
+        break;
+    default:
+        break;
+    }
+    return m_planeInfos[planeid].textureId + offset;
 }

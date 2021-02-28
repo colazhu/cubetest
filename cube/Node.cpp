@@ -735,11 +735,8 @@ bool Node::testIntersection(const Vector2& screenPoint, Vector3& intersect)
             float factorZ = (-0.85f - rayOrig.z)/rayDir.z;
             intersectInNode = rayOrig + rayDir*factorZ;
             matNode2World.transformPoint(intersectInNode, &intersect);
-            return true;
-        }
-        else {
-            return false;
-        }
+
+        }        
     }
 
     return false;

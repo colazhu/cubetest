@@ -19,7 +19,8 @@ Scene::Scene(const std::string& name):
     m_gyroMode(GYROMODE_TWO),
     m_enable(true),
     m_isCubeMode(true),
-    m_flicking(false)
+    m_flicking(false),
+    m_cb(NULL)
 {
 
 }
@@ -138,36 +139,38 @@ void Scene::updateArcball()
 
 void Scene::onTouch(TouchAction touchevent, float x, float y)
 {
-    if (!m_enable || !m_isCubeMode || !m_arcball) {
+    if (!m_enable || !m_arcball) {
         return;
     }
 
-    Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
+    if (m_isCubeMode) {
+        Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
 
-    switch (touchevent) {
-    case TouchAction_Down:
-        if (m_flicking) {
-            flickCube(false);
-            m_arcball->reset(m_flickPreQuat);
+        switch (touchevent) {
+        case TouchAction_Down:
+            if (m_flicking) {
+                flickCube(false);
+                m_arcball->reset(m_flickPreQuat);
+            }
+            m_arcball->onBegin(x, y);
+            break;
+        case TouchAction_Move:
+            m_arcball->onMove(x, y);
+            break;
+        case TouchAction_Up:
+            m_arcball->onEnd();
+            break;
+        case TouchAction_Cancel:
+            break;
+        default:
+            break;
         }
-        m_arcball->onBegin(x, y);
-        break;
-    case TouchAction_Move:
-        m_arcball->onMove(x, y);
-        break;
-    case TouchAction_Up:
-        m_arcball->onEnd();
-        break;
-    case TouchAction_Cancel:
-        break;
-    default:
-        break;
-    }
 
-    Matrix matrix = m_arcball->getRotationMatrix()* m_rotateMat;
-    matrix.invert();
-    cube->setAdditionalTransform(matrix);
-    cube->onTouch(touchevent, x, y);
+        Matrix matrix = m_arcball->getRotationMatrix()* m_rotateMat;
+        matrix.invert();
+        cube->setAdditionalTransform(matrix);
+        cube->onTouch(touchevent, x, y);
+    }
 }
 
 void Scene::onGesture(const GestureEvent& ev)
@@ -182,7 +185,7 @@ void Scene::onGesture(const GestureEvent& ev)
     switch(ev.gtype) {
     case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
     {
-        LOG_BASE("COMMON_GESTURE_TYPE_DOUBLECLICK gyroCube");
+        LOG_BASE("WL_COMMON_GESTURE_TYPE_DOUBLECLICK");
         gyroCube(m_gyroMode, m_isCubeMode, 2000);
         m_isCubeMode = !m_isCubeMode;
         // rotateScene(90, 1000);
@@ -190,17 +193,48 @@ void Scene::onGesture(const GestureEvent& ev)
         break;
     case WL_COMMON_GESTURE_TYPE_FLICK:
     {
-        LOG_BASE("COMMON_GESTURE_TYPE_FLICK flickCube");
+        LOG_BASE("WL_COMMON_GESTURE_TYPE_FLICK");
         flickCube(true);
     }
         break;
+
+    case WL_COMMON_GESTURE_TYPE_LONGPRESS:
+    {
+        LOG_BASE("WL_COMMON_GESTURE_TYPE_LONGPRESS state[%d]", ev.state);
+        int txtid = -1;
+        if (ev.state == WL_GESTURE_STATE_STARTED) {
+            if (m_isCubeMode) {
+                Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
+                int planeid = cube->getLastTouchDownPlane();
+                txtid = cube->getPlaneTexture(planeid);
+                LOG_BASE("CubeMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
+                if (-1 != planeid) {
+                    gyroCube(GYROMODE_TWO, m_isCubeMode, 2000);
+                    m_isCubeMode = !m_isCubeMode;
+                }
+
+            }
+            else {
+                CubePlane* plane = static_cast<CubePlane*>(getChild(CHILD_PLANE));
+                int planeid = plane->getIntersectPlane();
+                txtid = plane->getPlaneTexture(planeid);
+                LOG_BASE("PlaneMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
+             }
+        }
+        if (m_cb && -1 != txtid) {
+            m_cb->onTexturePicked(txtid);
+        }
+    }
+        break;
+//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DOUBLECLICK)
+//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_FLICK)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_TAP)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DRAG)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_PINCH)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2FLICK)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2ROTARY)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2DRAG)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
+    //PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2LONGPRESS)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2TAP)
     default:
@@ -308,6 +342,12 @@ void Scene::setCubePlaneTexture(int planeid, int txtid) {
         plane->setPlaneTexture(planeid, txtid);
     }
 }
+
+void Scene::addCubeCallback(CubeCallback* cb)
+{
+    m_cb = cb;
+}
+
 
 void Scene::disableInTime(float ms)
 {

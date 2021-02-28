@@ -171,6 +171,7 @@ struct GestureEvent : public Event
 {
     int gtype;
     int gclass;
+    int state;
 };
 
 

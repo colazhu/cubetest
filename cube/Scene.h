@@ -31,6 +31,7 @@ public:
     void flickCube(bool run = true);
     void rotateScene(float degrees, float ms = -1.0f);
     void setCubePlaneTexture(int planeid, int txtid);
+    void addCubeCallback(CubeCallback* cb);
 
 protected:    
     void disableInTime(float ms);
@@ -44,6 +45,7 @@ protected:
     Vector3 m_flickAxis;
     Quaternion m_flickPreQuat;
     Matrix m_rotateMat;
+    CubeCallback* m_cb;
 };
 
 #endif // SCENE_H

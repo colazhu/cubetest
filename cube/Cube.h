@@ -17,10 +17,14 @@ public:
     virtual void onTouch(TouchAction touchevent, float x, float y);
     virtual bool onTestIntersection(const Vector3& orig, const Vector3& dir, Vector3& intersect);
 
+
     void setDummyMode(bool enable);
     void doGyro();
     void setPlaneTexture(int planeid, int txtid);
-    
+    int getLastTouchDownPlane();
+    int getIntersectPlane();
+    int getPlaneTexture(int planeid);
+
 protected:
     void drawCube();
     void drawIntersection();
@@ -68,6 +72,7 @@ protected:
 
     int m_intersectVertexIdx;
     int m_intersectPlane;
+    int m_touchDownPlane;
 
     bool m_isDummy;
 };

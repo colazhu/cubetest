@@ -4,6 +4,7 @@
 #include "MathInc.h"
 #include "Geometry.h"
 #include "NodeDef.h"
+#include "CubeDef.h"
 
 class Camera;
 class Scene;
@@ -68,6 +69,8 @@ public:
     void setMode(int mode);
     void setLayout(int layout);
     int getLayout();
+
+    void addCubeCallback(CubeCallback* cb);
 
 private:
     Director();

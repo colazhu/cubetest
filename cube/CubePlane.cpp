@@ -140,9 +140,10 @@ void CubePlane::syncTarget(Cube* cube)
     m_scale = cube->m_scale;
     m_position  = cube->m_position;
 
-    m_transformAdditional = cube->m_transformAdditional;
-    m_intersectPlane = cube->m_intersectPlane;
+    m_transformAdditional = cube->m_transformAdditional;    
     m_intersectVertexIdx = cube->m_intersectVertexIdx;
+    m_intersectPlane = cube->m_intersectPlane;
+    m_touchDownPlane = cube->m_touchDownPlane;
 
     m_transformDirtys.setFlag(TransformDirty_All);
     invalidate(FLAGS_GEOMETRY_DIRTY);

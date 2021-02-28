@@ -98,7 +98,8 @@ HEADERS += \
     cube/math/CurveFunction.h \
     cube/CubePlane.h \
     cube/Base.h \
-    cube/RectNode.h
+    cube/RectNode.h \
+    cube/CubeDef.h
 
 SOURCES += \
     gesture/gestureCommonFun.cpp \

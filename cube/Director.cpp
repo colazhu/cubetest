@@ -35,6 +35,7 @@ void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)
         GestureEvent gestureev;
         gestureev.gclass = curList->data->gclass;
         gestureev.gtype = curList->data->gtype;
+        gestureev.state = curList->data->state;
         Director::instance()->injectGesture(gestureev);
         curList = curList->next;
     }
@@ -266,6 +267,13 @@ void Director::setLayout(int layout)
 int Director::getLayout()
 {
     return m_data->layout;
+}
+
+void Director::addCubeCallback(CubeCallback* cb)
+{
+    if (currentScene()) {
+        currentScene()->addCubeCallback(cb);
+    }
 }
 
 void Director::injectTouch(const TouchEvent& event)
