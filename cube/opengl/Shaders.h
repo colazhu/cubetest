@@ -22,6 +22,10 @@ extern const char* POSITIONTEXTURE_VERT;
 extern const char* POSITIONTEXTURE_FRAG;
 
 //
+extern const char* POSITIONTEXTURENOMVP_VERT;
+extern const char* POSITIONTEXTURENOMVP_FRAG;
+
+//
 extern const char* POSITIONCOLOR_VERT;
 extern const char* POSITIONCOLOR_FRAG;
 

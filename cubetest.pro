@@ -186,4 +186,6 @@ DISTFILES += \
     cube/opengl/Position.vert \
     cube/opengl/PositionColorSize.vert \
     cube/opengl/PositionTexture.frag \
-    cube/opengl/PositionTexture.vert
+    cube/opengl/PositionTexture.vert \
+    cube/opengl/PositionTextureNoMVP.frag \
+    cube/opengl/PositionTextureNoMVP.vert

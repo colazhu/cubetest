@@ -69,9 +69,11 @@ public:
     void setMode(int mode);
     void setLayout(int layout);
     int getLayout();
+    int longclickScene();
 
     void addCubeCallback(CubeCallback* cb);
-
+    int popSelectedTexture();
+    
 private:
     Director();
     void setDepthTest(bool on);

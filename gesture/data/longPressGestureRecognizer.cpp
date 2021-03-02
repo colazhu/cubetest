@@ -84,7 +84,7 @@ GestureRecognizer::ResultFlag LongPressGestureRecognizer::recognize(GestureObjec
 			mTimer->setInterval(LongPressGestureInterval);
 			mTimer->setUserData(data);
 			mTimer->start();
-            LOG_BASE("LongPressGestureRecognizer::TimerStart");
+            // LOG_BASE("LongPressGestureRecognizer::TimerStart");
 		}
 		break;
 								
@@ -134,7 +134,7 @@ GestureRecognizer::ResultFlag LongPressGestureRecognizer::recognize(GestureObjec
 
 GestureRecognizer::ResultFlag LongPressGestureRecognizer::onTimer(GestureObject *state)
 {
-    LOG_BASE("LongPressGestureRecognizer::onTimer");
+    // LOG_BASE("LongPressGestureRecognizer::onTimer");
 	ResultFlag retFlag = ResultFlag_Ignore;
 	LongPressGesture *ges = static_cast<LongPressGesture *>(state);
 	if (!ges) {

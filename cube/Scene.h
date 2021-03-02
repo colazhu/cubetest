@@ -28,10 +28,12 @@ public:
          GYROMODE_TWO
     };
     void setGyroMode(int mode);
+    int longclickScene();
     void flickCube(bool run = true);
     void rotateScene(float degrees, float ms = -1.0f);
     void setCubePlaneTexture(int planeid, int txtid);
     void addCubeCallback(CubeCallback* cb);
+    int popSelectedTexture();
 
 protected:    
     void disableInTime(float ms);
@@ -46,6 +48,7 @@ protected:
     Quaternion m_flickPreQuat;
     Matrix m_rotateMat;
     CubeCallback* m_cb;
+    int m_txtIdSelected;
 };
 
 #endif // SCENE_H

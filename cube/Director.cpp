@@ -258,6 +258,10 @@ void Director::setMode(int mode)
 
 void Director::setLayout(int layout)
 {
+    if (layout == m_data->layout) {
+        return;
+    }
+
     m_data->layout = layout;
     if (currentScene()) {
         currentScene()->setLayout(layout);
@@ -269,11 +273,27 @@ int Director::getLayout()
     return m_data->layout;
 }
 
+int Director::longclickScene()
+{
+    if (currentScene()) {
+        return currentScene()->longclickScene();
+    }
+    return -1;
+}
+
 void Director::addCubeCallback(CubeCallback* cb)
 {
     if (currentScene()) {
         currentScene()->addCubeCallback(cb);
     }
+}
+
+int Director::popSelectedTexture()
+{
+    if (currentScene()) {
+        return currentScene()->popSelectedTexture();
+    }
+    return -1;
 }
 
 void Director::injectTouch(const TouchEvent& event)
@@ -408,7 +428,7 @@ bool Director::render()
     }
 //    LOG_BASE(" render ");
     GLHook::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    GLHook::glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+    GLHook::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     GLHook::glClearDepthf(1.0f);
 
     setAlphaBlending(true);

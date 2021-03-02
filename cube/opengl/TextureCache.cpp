@@ -170,7 +170,7 @@ Texture* TextureCache::getTexture(const std::string &textureKeyName) {
     TextureMap::iterator it = m_textures.find(key);
 
     if (it != m_textures.end()) {
-        LOG_BASE("getTexture:%s %p %d", key.c_str(), it->second, it->second->ogltxtid);
+        // LOG_BASE("getTexture:%s %p %d", key.c_str(), it->second, it->second->ogltxtid);
         return it->second;
     }
     return NULL;

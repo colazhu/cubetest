@@ -10,6 +10,7 @@ extern const char* GRIDSHADER;
 extern const char* PARTICLESHADER;
 extern const char* POSITIONCOLORSHADER;
 extern const char* POSITIONTEXTURESHADER;
+extern const char* POSITIONTEXTURENOMVPSHADER;
 extern const char* POSITIONTEXTURECOLORSHADER;
 
 class ProgramCache {

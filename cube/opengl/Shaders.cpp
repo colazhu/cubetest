@@ -26,6 +26,11 @@
 #include "PositionTexture.vert"
 #include "PositionTexture.frag"
 
+
+//
+#include "PositionTextureNoMVP.vert"
+#include "PositionTextureNoMVP.frag"
+
 #include "PositionColor.vert"
 #include "PositionColor.frag"
 

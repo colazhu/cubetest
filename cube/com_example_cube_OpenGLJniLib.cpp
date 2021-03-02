@@ -8,9 +8,33 @@
 #define LOGJNI(...) __android_log_print(ANDROID_LOG_DEBUG, "Cube", __VA_ARGS__)
 
 #include "Director.h"
+
+class CubeCbImpl : public CubeCallback
+{
+public:
+    virtual ~CubeCbImpl() {}
+    virtual void onTexturePicked(int txtid);
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+static JavaVM* 	    s_jvm = NULL;
+static jclass       s_cls = NULL;
+static jmethodID    s_methodid_textureSelected = NULL;
+
+
+void Callback_OnTextureSelected(int txtid)
+{
+    JNIEnv* env = NULL;
+    s_jvm->AttachCurrentThread(&env, 0);
+    LOGJNI("CallStaticVoidMethod env:%p cls:%p method:%p ++", env, s_cls, s_methodid_textureSelected);
+    if (env && s_cls && s_methodid_textureSelected) {
+        env->CallStaticVoidMethod(s_cls, s_methodid_textureSelected, txtid);
+    }
+}
+
 /*
  * Class:     com_example_cube_OpenGLJniLib
  * Method:    getFPS
@@ -21,6 +45,20 @@ jfloat Java_com_example_cube_OpenGLJniLib_getFPS
 {
     LOGJNI("getFPS");
     return Director::instance()->getFps();
+}
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
+ * Method:    longclickScene
+ * Signature: ()I
+ */
+jint JNICALL Java_com_example_cube_OpenGLJniLib_longclickScene
+(JNIEnv *env, jclass cls)
+{
+    LOGJNI("longclickScene +++");
+    int ret = Director::instance()->longclickScene();
+    LOGJNI("longclickScene:%d ---", ret);
+    return ret;
 }
 
 /*
@@ -136,11 +174,12 @@ void Java_com_example_cube_OpenGLJniLib_setLayout
 void Java_com_example_cube_OpenGLJniLib_initWindow
 (JNIEnv *env, jclass cls, jint w, jint h)
 {
-    LOGJNI("init");
+    LOGJNI("initWindow");
     setuid(0);
     Director::instance()->init();
     LOGJNI("setWindowSize %d %d", w, h);
     Director::instance()->setWindowSize(w, h);
+    // Director::instance()->addCubeCallback(new CubeCbImpl());
 }
 
 /*
@@ -163,13 +202,14 @@ void Java_com_example_cube_OpenGLJniLib_injectTouch
 /*
  * Class:     com_example_cube_OpenGLJniLib
  * Method:    loopOnce
- * Signature: ()V
+ * Signature: ()I
  */
-void Java_com_example_cube_OpenGLJniLib_loopOnce
+jint Java_com_example_cube_OpenGLJniLib_loopOnce
   (JNIEnv *env, jclass cls)
 {
     // LOGJNI("loop");
     Director::instance()->loop();
+    return Director::instance()->popSelectedTexture();
 }
 
 /*
@@ -198,6 +238,22 @@ void Java_com_example_cube_OpenGLJniLib_resume
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    init
+ * Signature: ()V
+ */
+void JNICALL Java_com_example_cube_OpenGLJniLib_init
+  (JNIEnv *env, jclass cls)
+{
+    LOGJNI("init");
+    env->GetJavaVM(&s_jvm);
+    s_cls = (jclass)(env->NewGlobalRef(cls));
+    LOGJNI("init jvm:%p cls:%p", s_jvm, s_cls);
+    // s_methodid_textureSelected = env->GetStaticMethodID(cls, "textureselected", "(I)V");
+    // s_methodid_textureSelected = env->GetMethodID(cls, "textureselected", "(I)V");
+}
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    deinit
  * Signature: ()V
  */
@@ -209,4 +265,9 @@ void Java_com_example_cube_OpenGLJniLib_deinit
 }
 #ifdef __cplusplus
 }
+
+void CubeCbImpl::onTexturePicked(int txtid) {
+        Callback_OnTextureSelected(txtid);
+}
+
 #endif

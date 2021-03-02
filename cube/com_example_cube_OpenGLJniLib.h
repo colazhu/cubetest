@@ -17,6 +17,14 @@ JNIEXPORT jfloat JNICALL Java_com_example_cube_OpenGLJniLib_getFPS
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    longclickScene
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_example_cube_OpenGLJniLib_longclickScene
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    addTexture
  * Signature: (II)V
  */
@@ -90,9 +98,9 @@ JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_injectTouch
 /*
  * Class:     com_example_cube_OpenGLJniLib
  * Method:    loopOnce
- * Signature: ()V
+ * Signature: ()I
  */
-JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_loopOnce
+JNIEXPORT jint JNICALL Java_com_example_cube_OpenGLJniLib_loopOnce
   (JNIEnv *, jclass);
 
 /*
@@ -113,11 +121,21 @@ JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_resume
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    init
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_init
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    deinit
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_deinit
   (JNIEnv *, jclass);
+
+
 
 #ifdef __cplusplus
 }

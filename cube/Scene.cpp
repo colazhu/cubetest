@@ -20,7 +20,8 @@ Scene::Scene(const std::string& name):
     m_enable(true),
     m_isCubeMode(true),
     m_flicking(false),
-    m_cb(NULL)
+    m_cb(NULL),
+    m_txtIdSelected(-1)
 {
 
 }
@@ -37,6 +38,9 @@ void Scene::init()
 {
     updateArcball();
 
+    RectNode* background = new RectNode("background", this);
+    background->initGeometryBuffer();
+    
     LightCache& lightcache = Director::instance()->lightCache();
     lightcache.setGlobalAmbientColor(Color4F(0.5, 0.5, 0.5, 1.0));
 
@@ -117,10 +121,10 @@ void Scene::setGyroMode(int mode)
 
 void Scene::setLayout(int layout)
 {
-//    CubePlane* plane = static_cast<CubePlane*>(getChild(CHILD_PLANE));
-//    if (plane) {
-//        plane->setLayout(layout);
-//    }
+    if (!m_isCubeMode) {
+        gyroCube(m_gyroMode, m_isCubeMode, 2000);
+        m_isCubeMode = !m_isCubeMode;
+    }
 }
 
 void Scene::updateArcball()
@@ -180,7 +184,7 @@ void Scene::onGesture(const GestureEvent& ev)
     }
 
 #define PRINT_GESTRUE(GETSTURE_NAME) \
-    case GETSTURE_NAME: { LOG_BASE(#GETSTURE_NAME); break; }
+    case GETSTURE_NAME: { LOG_BASE("%s state[%d]", #GETSTURE_NAME, ev.state); break; }
     
     switch(ev.gtype) {
     case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
@@ -197,44 +201,31 @@ void Scene::onGesture(const GestureEvent& ev)
         flickCube(true);
     }
         break;
-
     case WL_COMMON_GESTURE_TYPE_LONGPRESS:
     {
         LOG_BASE("WL_COMMON_GESTURE_TYPE_LONGPRESS state[%d]", ev.state);
         int txtid = -1;
         if (ev.state == WL_GESTURE_STATE_STARTED) {
-            if (m_isCubeMode) {
-                Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
-                int planeid = cube->getLastTouchDownPlane();
-                txtid = cube->getPlaneTexture(planeid);
-                LOG_BASE("CubeMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
-                if (-1 != planeid) {
-                    gyroCube(GYROMODE_TWO, m_isCubeMode, 2000);
-                    m_isCubeMode = !m_isCubeMode;
-                }
-
-            }
-            else {
-                CubePlane* plane = static_cast<CubePlane*>(getChild(CHILD_PLANE));
-                int planeid = plane->getIntersectPlane();
-                txtid = plane->getPlaneTexture(planeid);
-                LOG_BASE("PlaneMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
-             }
+            txtid = longclickScene();            
         }
-        if (m_cb && -1 != txtid) {
-            m_cb->onTexturePicked(txtid);
+
+        if (-1 != txtid) {
+            m_txtIdSelected = txtid;
+            if (m_cb) {
+                m_cb->onTexturePicked(txtid);
+            }
         }
     }
         break;
 //    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DOUBLECLICK)
 //    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_FLICK)
+//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_TAP)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DRAG)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_PINCH)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2FLICK)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2ROTARY)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2DRAG)
-    //PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2LONGPRESS)
     PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2TAP)
     default:
@@ -260,6 +251,29 @@ void Scene::onUpdate(float dt)
         invalidate(FLAGS_GEOMETRY_DIRTY);
     }
 
+}
+
+int Scene::longclickScene()
+{
+    int txtid = -1;
+    if (m_isCubeMode) {
+        Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
+        int planeid = cube->getLastTouchDownPlane();
+        txtid = cube->getPlaneTexture(planeid);
+        LOG_BASE("CubeMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
+        if (-1 != planeid) {
+            gyroCube(GYROMODE_TWO, m_isCubeMode, 2000);
+            m_isCubeMode = !m_isCubeMode;
+        }
+
+    }
+    else {
+        CubePlane* plane = static_cast<CubePlane*>(getChild(CHILD_PLANE));
+        int planeid = plane->getIntersectPlane();
+        txtid = plane->getPlaneTexture(planeid);
+        LOG_BASE("PlaneMode Plane[%d][txt:%d] on LongPressed", planeid, txtid);
+    }
+    return txtid;
 }
 
 void Scene::flickCube(bool run)
@@ -348,6 +362,12 @@ void Scene::addCubeCallback(CubeCallback* cb)
     m_cb = cb;
 }
 
+int Scene::popSelectedTexture()
+{
+    int ret = m_txtIdSelected;
+    m_txtIdSelected = -1;
+    return ret;
+}
 
 void Scene::disableInTime(float ms)
 {
