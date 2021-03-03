@@ -89,11 +89,19 @@ JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_initWindow
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    setTouchRegion
+ * Signature: (IIII)V
+ */
+JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_setTouchRegion
+  (JNIEnv *, jclass, jint, jint, jint, jint);
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    injectTouch
- * Signature: (IFF)V
+ * Signature: (IIFF)V
  */
 JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_injectTouch
-  (JNIEnv *, jclass, jint, jfloat, jfloat);
+  (JNIEnv *, jclass, jint, jint, jfloat, jfloat);
 
 /*
  * Class:     com_example_cube_OpenGLJniLib

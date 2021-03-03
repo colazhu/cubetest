@@ -299,27 +299,20 @@ int Director::popSelectedTexture()
 void Director::injectTouch(const TouchEvent& event)
 {
     int motionEvent = 0;
-    MultiTouchPoint point[5];
-    point[0].coords.x = event.x;
-    point[0].coords.y = event.y;
-  
     switch (event.action) {
     case TouchAction_Down:
         motionEvent = MOTION_EVENT_ACTION_DOWN;
-        point[0].state = TouchPointPressed;
         break;
     case TouchAction_Up:
         motionEvent = MOTION_EVENT_ACTION_UP;
-        point[0].state = TouchPointReleased;
         break;
     case TouchAction_Move:
         motionEvent = MOTION_EVENT_ACTION_MOVE;
-        point[0].state = TouchPointMoved;
         break;
     default:
         return;
     }
-    GestureManager::instance()->processTouchEvent(motionEvent, 0, point, 1, GestureCommonFun::currentTime());
+    GestureManager::instance()->processTouchEvent(motionEvent, 0, event.id, event.x, event.y);
 
     if (currentScene()) {
         currentScene()->onTouch((TouchAction)event.action, event.x, event.y);
@@ -335,7 +328,7 @@ void Director::injectGesture(const GestureEvent& ev)
 
 void Director::setWindowSize(int width, int height)
 {
-    GestureManager::instance()->setFoucsSurfaceRegion(new GestureRegion(0, 0, width, height));
+    setTouchRegion(0, 0, width, height);
     m_data->winSize = Rect(0, 0, width, height);
     m_data->curcamera->init(CAMERA_EYE, CAMERA_DIR, Rect(0.0f, 0.0f, width, height));
     m_data->matrixStack.loadMatrix(MATRIX_STACK_PROJECTION, m_data->curcamera->projection());
@@ -348,6 +341,11 @@ void Director::setWindowSize(int width, int height)
 Rect Director::getWindowSize()
 {
     return m_data->winSize;
+}
+
+void Director::setTouchRegion(int x, int y, int width, int height)
+{
+    GestureManager::instance()->setFoucsSurfaceRegion(GestureRegion(x, y, width, height));
 }
 
 MatrixStack& Director::matrixStack()

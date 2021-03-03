@@ -25,14 +25,16 @@ public:
     void disableCommonGesture(void *surface, uint32_t mask);
     uint32_t getCommonMask();
     void onSurfaceDestroy(void *surface);
-
+    void processTouchEvent(int eventAction,
+                           void *data,
+                           int id, int x, int y, long long when = 0);
 	void processTouchEvent(int motionEventAction, 
 			void *data, 
 			struct MultiTouchPoint *mtPoints, 
 			int pointCount,
-			long long when);
+            long long when = 0);
 
-    void setFoucsSurfaceRegion(GestureRegion* region);
+    void setFoucsSurfaceRegion(const GestureRegion& region);
     GestureRegion* getFoucsSurfaceRegion() {return mFoucsSurfaceRegion;}
     GestureRecognizerManager* getGestureRecognizerManager() {return mRecognizerManager;}
     GestureTimerManager* getTimerManager() { return mTimerManager;}
@@ -46,13 +48,15 @@ private:
 	~GestureManager();
 	GestureManager(GestureManager&);
 	GestureManager& operator=(GestureManager&);
-		
-	static GestureManager* s_instance; 
 
-private:
     void updateGestureRecognizer(WL_GESTURE_CLASS gclass, uint32_t mask);
-
+    int processSingleTouchDown(int id, int x, int y);
+    int processSingleTouchMove(int id, int x, int y);
+    int processSingleTouchUp(int id, int x, int y);
+    void postProcessSingleTouch();
 private:
+    static GestureManager* s_instance;
+
 	GestureRegisters* mSystemRegisters;
 	uint32_t mSystemGlobalMask;
 
@@ -63,6 +67,8 @@ private:
 
     GestureRecognizerManager* mRecognizerManager;
     GestureTimerManager* mTimerManager;
+
+    MultiTouchPoint m_points[WL_GESTURE_MAX_POINTS];
 
     FUNC_NOTIFY_GESTURE_EVENT mNotifyFunc;
 };

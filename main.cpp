@@ -93,6 +93,7 @@ void onMouseEvent(const MouseEvent& event) {
 //    GestureManager::instance()->processTouchEvent(motionEvent, 0, point, 1, GestureCommonFun::currentTime());
     TouchEvent touchev;
     // touchev.eventtype;
+    touchev.id = 0;
     touchev.action = touchevent;
     touchev.x = event.x;
     touchev.y = event.y;
@@ -258,8 +259,8 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
     return window;
 }
 
-#define DEFAULT_SIZE_WIDTH (1280)
-#define DEFAULT_SIZE_HEIGTH (720)
+#define DEFAULT_SIZE_WIDTH (800)
+#define DEFAULT_SIZE_HEIGTH (480)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 

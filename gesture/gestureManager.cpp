@@ -38,7 +38,7 @@ mMaxGestureType(maxGestureType),
 mGlobalMask(0)
 {
 	mRegisterNum = (int32_t*)malloc(sizeof(int32_t)*maxGestureType);
-	memset(mRegisterNum, 0, sizeof(int32_t)*maxGestureType);
+    memset(mRegisterNum, 0, sizeof(int32_t)*maxGestureType);
 }
 
 GestureRegisters::~GestureRegisters()
@@ -205,9 +205,11 @@ mNotifyFunc(0)
 	mRecognizerManager = new GestureRecognizerManager();	
     mTimerManager = new GestureTimerManager();
     mFoucsSurfaceRegion = new GestureRegion();
-    // todo
-//	pixman_region32_init(&mFoucsSurfaceRegion);
-//	pixman_region32_init_rect(&mFoucsSurfaceRegion, 0, 0, 0, 0);
+
+    memset(m_points, 0, sizeof(MultiTouchPoint)*WL_GESTURE_MAX_POINTS);
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        m_points[i].id = -1;
+    }
 }
 
 GestureManager::~GestureManager()
@@ -314,18 +316,154 @@ void GestureManager::setNotifyFunc(FUNC_NOTIFY_GESTURE_EVENT notify)
 //	mEventLoop = eventLoop;
 //}
 
+
+int GestureManager::processSingleTouchDown(int id, int x, int y)
+{
+    int motionEventAction = -1;
+    do {
+        if (!mFoucsSurfaceRegion || !mFoucsSurfaceRegion->contain(x, y)) {
+            // LOG_BASE("out of range");
+            break;
+        }
+        
+        int validPoints = 0;
+		int idxSelf = -1;
+        int idxIdle = -1;
+        for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+            if (m_points[i].id == id) {
+                idxSelf = i;
+            }
+            if (m_points[i].id != -1) {
+                ++validPoints;
+            }
+            else {
+                if (-1 == idxIdle) {
+                    idxIdle = i;
+                }
+            }
+        }
+
+        if (idxSelf != -1) {
+			LOG_BASE("[id:%d] pre-press again, ignore", id);  
+			break;
+            // LOG_BASE("found self not finised yet, re-press again");            
+			// idxIdle = idxSelf; 
+        }
+
+        if (idxIdle == -1) {
+            // LOG_BASE("no idle");
+            break; // reach max points ignore
+        }
+
+        motionEventAction = (validPoints == 0) ? MOTION_EVENT_ACTION_DOWN : MOTION_EVENT_ACTION_POINTER_DOWN;
+        m_points[idxIdle].id = id;
+        m_points[idxIdle].isPrimary = (validPoints == 0);
+        m_points[idxIdle].state = TouchPointPressed;
+        m_points[idxIdle].coords.x = x;
+        m_points[idxIdle].coords.y = y;
+    } while(0);
+    return motionEventAction;
+}
+
+int GestureManager::processSingleTouchMove(int id, int x, int y)
+{
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].id == id) {
+            if (m_points[i].state == TouchPointPressed ||
+                m_points[i].state == TouchPointMoved) {
+                m_points[i].state = TouchPointMoved;
+                m_points[i].coords.x = x;
+                m_points[i].coords.y = y;
+                return MOTION_EVENT_ACTION_MOVE;
+            }
+        }
+    }
+    return -1;
+}
+
+int GestureManager::processSingleTouchUp(int id, int x, int y)
+{
+    int motionEventAction = -1;
+    bool otherPressed = false;
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].id == id) {
+            if (m_points[i].state == TouchPointPressed ||
+                m_points[i].state == TouchPointMoved) {
+                m_points[i].state = TouchPointReleased;
+                motionEventAction = MOTION_EVENT_ACTION_UP;
+            }
+        }
+        else {
+            if (m_points[i].id != -1
+                    && (m_points[i].state == TouchPointPressed || m_points[i].state == TouchPointMoved)) {
+                otherPressed = true;
+            }
+        }
+    }
+
+    if (otherPressed && motionEventAction == MOTION_EVENT_ACTION_UP) {
+        motionEventAction = MOTION_EVENT_ACTION_POINTER_UP;
+    }
+    return motionEventAction;
+}
+
+void GestureManager::postProcessSingleTouch()
+{
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].state == TouchPointReleased) {
+            memset(&m_points[i], 0, sizeof(MultiTouchPoint));
+            m_points[i].id = -1;
+        }
+    }
+}
+
+void GestureManager::processTouchEvent(int eventAction, void *data, int id, int x, int y, long long when)
+{
+    // LOG_BASE_TRACE("processTouchEvent:%d id:%d x:%d y:%d", eventAction, id, x, y);
+    int motionEventAction = -1;
+    switch (eventAction) {
+    case MOTION_EVENT_ACTION_DOWN:
+        motionEventAction = processSingleTouchDown(id, x, y);
+        break;
+    case MOTION_EVENT_ACTION_UP:
+        motionEventAction = processSingleTouchUp(id, x, y);
+        break;
+    case MOTION_EVENT_ACTION_MOVE:
+        motionEventAction = processSingleTouchMove(id, x, y);
+        break;
+    default:
+        break;
+    }
+
+    if (-1 == motionEventAction) {
+        LOG_BASE_E("Invalid EventAction");
+        return;
+    }
+
+    int validPoints = 0;
+    MultiTouchPoint points[WL_GESTURE_MAX_POINTS];
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].id != -1) {
+            memcpy(&points[validPoints], &m_points[i], sizeof(MultiTouchPoint));
+            ++validPoints;
+        }
+    }
+    processTouchEvent(motionEventAction, data, points, validPoints, when);
+    postProcessSingleTouch();
+}
+
 void GestureManager::processTouchEvent(int motionEventAction, 
                                         void *data,
                                         struct MultiTouchPoint *mtPoints,
                                         int pointCount,
                                         long long when)
 {
-    mRecognizerManager->processTouchEvent(motionEventAction, data, mtPoints, pointCount, mNotifyFunc, mFoucsSurfaceRegion, when);
+    mRecognizerManager->processTouchEvent(motionEventAction, data, mtPoints, pointCount, mNotifyFunc, mFoucsSurfaceRegion, when == 0 ?  GestureCommonFun::currentTime() : when);
 }
 
-void GestureManager::setFoucsSurfaceRegion(GestureRegion* region)
+void GestureManager::setFoucsSurfaceRegion(const GestureRegion& region)
 {
-    memcpy(mFoucsSurfaceRegion, region, sizeof(GestureRegion));
+    memcpy(mFoucsSurfaceRegion, &region, sizeof(GestureRegion));
 //	pixman_region32_copy(&mFoucsSurfaceRegion,
 //				     region);
 }

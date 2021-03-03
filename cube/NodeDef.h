@@ -162,6 +162,7 @@ enum TouchAction {
 
 struct TouchEvent : public Event
 {
+    int id;
     int action;
     int x;
     int y;

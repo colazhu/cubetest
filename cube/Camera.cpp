@@ -204,7 +204,7 @@ public:
 
         Camera* camera = static_cast<Camera*>(target);
         camera->m_up = curUp;
-        LOG_BASE("onUpdate:%p %.3f %.3f, up:%.2f %.2f %.2f", target, dt, time, curUp.x, curUp.y, curUp.z);
+        // LOG_BASE("onUpdate:%p %.3f %.3f, up:%.2f %.2f %.2f", target, dt, time, curUp.x, curUp.y, curUp.z);
         camera->notifyCameraChanged();
     }
 

@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 // static const int wl_gesture_invalid_coordinate = -1;
+#define WL_GESTURE_MAX_POINTS  5
 
 enum WL_GESTURE_STATE {
     WL_GESTURE_STATE_STARTED  = 0,
@@ -227,13 +228,13 @@ enum TouchPointState {
     TouchPointInvalid = 0x00,
     TouchPointPressed = 0x01,
     TouchPointMoved = 0x02,
-    TouchPointStationary = 0x04,
+    // TouchPointStationary = 0x04,
     TouchPointReleased = 0x08
 };
 
 struct MultiTouchPoint {
-//    int id;
-//    int isPrimary;
+    int id;
+    int isPrimary;
     struct TouchPointerCoords coords;
     enum TouchPointState state;
 };
@@ -246,7 +247,7 @@ struct MultiTouchPoint {
 enum {
     /* Bit mask of the parts of the action code that are the action itself.
      */
-    MOTION_EVENT_ACTION_MASK = 0xff,
+    MOTION_EVENT_ACTION_MASK = 0x00ff,
 
     /* Bits in the action code that represent a pointer index, used with
      * MOTION_EVENT_ACTION_POINTER_DOWN and MOTION_EVENT_ACTION_POINTER_UP.  Shifting

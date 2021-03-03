@@ -195,7 +195,7 @@ void CubePlane::doGyroZoomInTransition()
     Vector3 upDst(1, 0, 0);
     Matrix matUpDst;
     if (LAYOUT_FULL_PORTRAIT == layout || LAYOUT_HALF_PORTRAIT == layout) {
-        matUpDst.rotateZ(-MATH_DEG_TO_RAD(90));
+        matUpDst.rotateZ(MATH_DEG_TO_RAD(90));
     }
     matUpDst.transformVector(getCamera()->up(), &upDst);
     Vector3 normalSrc, upSrc;

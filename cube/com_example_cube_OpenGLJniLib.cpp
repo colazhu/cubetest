@@ -182,18 +182,26 @@ void Java_com_example_cube_OpenGLJniLib_initWindow
     // Director::instance()->addCubeCallback(new CubeCbImpl());
 }
 
+void JNICALL Java_com_example_cube_OpenGLJniLib_setTouchRegion
+  (JNIEnv *env, jclass cls, jint x, jint y, jint w, jint h)
+{
+    LOGJNI("setTouchRegion: x:%d y:%d w:%d h:%d", x, y, w, h);
+    Director::instance()->setTouchRegion(x, y, w, h);
+}
+
 /*
  * Class:     com_example_cube_OpenGLJniLib
  * Method:    injectTouch
  * Signature: (IFF)V
  */
 void Java_com_example_cube_OpenGLJniLib_injectTouch
-  (JNIEnv *env, jclass cls, jint action, jfloat x, jfloat y)
+  (JNIEnv *env, jclass cls, jint id, jint action, jfloat x, jfloat y)
 {
-    LOGJNI("injectTouch %d %.1f %.1f", action, x, y);
+    LOGJNI("injectTouch id:%d action:%d x:%.1f y:%.1f", id, action, x, y);
 
     TouchEvent event;
     event.action = action;
+    event.id = id;
     event.x = x;
     event.y = y;
     Director::instance()->injectTouch(event);

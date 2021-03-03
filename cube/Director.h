@@ -47,6 +47,8 @@ public:
     void setWindowSize(int width, int height);
     Rect getWindowSize();
 
+    void setTouchRegion(int x, int y, int width, int height);
+
     Camera* getCamera(const std::string& name);
     Camera* currentCamera();
 
