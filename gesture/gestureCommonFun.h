@@ -19,6 +19,7 @@ struct GestureCommonFun
 
     // the return buffer must be free outside
     static Gesture_Event_Data* gestureToData(GestureObject* object);
+    static GestureObject* gestureToObject(Gesture_Event_Data* data);
 
     static void printGestureData(const Gesture_Event_Data* data);
     static void printGestureDataList(const Gesture_Event_Data_List* data);

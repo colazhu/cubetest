@@ -34,8 +34,8 @@ public:
 	void setLastPoints(int x1, int y1, int x2, int y2);
 	void setStartPoints(int x1, int y1, int x2, int y2);
 	
-	GesturePoint* getStartPoints() {return mStartPoints;};
-	GesturePoint* getLastPoints() {return mLastPoints;};
+    GesturePoint* getStartPoints() {return mStartPoints;}
+    GesturePoint* getLastPoints() {return mLastPoints;}
 	
     void setStartCenterPoint(GesturePoint value) {mStartCenterPoint = value;}
     void setLastCenterPoint(GesturePoint value) {mLastCenterPoint = value;}
@@ -43,7 +43,7 @@ public:
 	
     void setTotalScaleFactor(float value) {mTotalScaleFactor = value;}
     void setLastScaleFactor(float value) {mLastScaleFactor = value;}
-    void setScaleFactor(float value) {mScaleFactor = value;};
+    void setScaleFactor(float value) {mScaleFactor = value;}
 	
     void setTotalRotationAngle(float value) {mTotalRotationAngle = value;}
     void setLastRotationAngle(float value) {mLastRotationAngle = value;}

@@ -15,6 +15,7 @@ class LightCache;
 class TextureCache;
 class ProgramCache;
 class ActionCache;
+class GestureObject;
 
 enum LAYOUT_TYPE {
     LAYOUT_FULL = 0x01,
@@ -62,7 +63,7 @@ public:
     ActionCache& actionCache();
 
     void injectTouch(const TouchEvent& event);
-    void injectGesture(const GestureEvent& ev);
+    void injectGesture(const GestureObject& ev);
     float getFps();
     void setPlaneTexture(int planeid, int txtid);
     void addTexture(int txtid, int gltxtid, int w, int h);

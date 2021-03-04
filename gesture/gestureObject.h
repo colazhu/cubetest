@@ -49,7 +49,7 @@ public:
     inline GESTURE_TYPE getType() { return mType; }
     inline GESTURE_STATE getState() { return mState; }
     inline void setState(GESTURE_STATE state) { mState = state; }
-	virtual bool copyData(GestureObject* object) = 0;
+    virtual bool copyData(GestureObject* object) {return false;}
 	virtual void clearData();
 
 protected:

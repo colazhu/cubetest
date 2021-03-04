@@ -168,12 +168,4 @@ struct TouchEvent : public Event
     int y;
 };
 
-struct GestureEvent : public Event
-{
-    int gtype;
-    int gclass;
-    int state;
-};
-
-
 #endif // NODEDEF_H

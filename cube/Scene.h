@@ -16,7 +16,7 @@ public:
 
     virtual void onUpdate(float dt);
     virtual void onTouch(TouchAction touchevent, float x, float y);
-    virtual void onGesture(const GestureEvent& ev);
+    virtual void onGesture(GestureObject& ev);
     virtual void onTimeOut(int id);
 
     void updateArcball();

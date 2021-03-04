@@ -6,7 +6,6 @@
 #include "Cube.h"
 #include "CubePlane.h"
 #include "RectNode.h"
-#include "gesturePublicDef.h"
 
 #define CUBE_SCALE 6.0f
 #define CHILD_CUBE "Cube"
@@ -179,62 +178,74 @@ void Scene::onTouch(TouchAction touchevent, float x, float y)
     }
 }
 
-void Scene::onGesture(const GestureEvent& ev)
+#include "gesturePublicDef.h"
+#include "gestureDef.h"
+#include "gestureObject.h"
+
+void Scene::onGesture(GestureObject& ev)
 {
     if (!m_enable) {
         return;
     }
 
 #define PRINT_GESTRUE(GETSTURE_NAME) \
-    case GETSTURE_NAME: { LOG_BASE("%s state[%d]", #GETSTURE_NAME, ev.state); break; }
+    case GETSTURE_NAME: { LOG_BASE("%s state[%d]", #GETSTURE_NAME, ev.getState()); break; }
     
-    switch(ev.gtype) {
-    case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
-    {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_DOUBLECLICK");
-        gyroCube(m_gyroMode, m_isCubeMode, 2000);
-        m_isCubeMode = !m_isCubeMode;
-        // rotateScene(90, 1000);
-    }
-        break;
-    case WL_COMMON_GESTURE_TYPE_FLICK:
-    {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_FLICK");
-        flickCube(true);
-    }
-        break;
-    case WL_COMMON_GESTURE_TYPE_LONGPRESS:
-    {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_LONGPRESS state[%d]", ev.state);
-        int txtid = -1;
-        if (ev.state == WL_GESTURE_STATE_STARTED) {
-            txtid = longclickScene();            
+    switch(ev.getType()) {
+        case GESTURE_TYPE_3FLICK:
+        {
+            LOG_BASE("GESTURE_TYPE_3FLICK state[%d]", ev.getState());
         }
+            break;
+        case GESTURE_TYPE_DOUBLECLICK:
+        {
+            LOG_BASE("GESTURE_TYPE_DOUBLECLICK");
+            gyroCube(m_gyroMode, m_isCubeMode, 2000);
+            m_isCubeMode = !m_isCubeMode;
+            // rotateScene(90, 1000);
+        }
+            break;
+        case GESTURE_TYPE_FLICK:
+        {
+            LOG_BASE("GESTURE_TYPE_FLICK state[%d]", ev.getState());
+            flickCube(true);
+        }
+            break;
+        case GESTURE_TYPE_LONGPRESS:
+        {
+            LOG_BASE("GESTURE_TYPE_LONGPRESS state[%d]", ev.getState());
+            int txtid = -1;
+            if (ev.getState() == GESTURE_STATE_UPDATED) {
+                txtid = longclickScene();
+            }
 
-        if (-1 != txtid) {
-            m_txtIdSelected = txtid;
-            if (m_cb) {
-                m_cb->onTexturePicked(txtid);
+            if (-1 != txtid) {
+                m_txtIdSelected = txtid;
+                if (m_cb) {
+                    m_cb->onTexturePicked(txtid);
+                }
             }
         }
-    }
+            break;
+        case GESTURE_TYPE_PINCH:
+        {
+            LOG_BASE("GESTURE_TYPE_PINCH state[%d]", ev.getState());
+        }
         break;
-    case WL_COMMON_GESTURE_TYPE_PINCH:
-    {
-        LOG_BASE("WL_COMMON_GESTURE_TYPE_PINCH state[%d]", ev.state);
-    }
-        break;
-//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DOUBLECLICK)
-//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_FLICK)
-//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_LONGPRESS)
-//    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_PINCH)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_TAP)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_DRAG)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2FLICK)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2ROTARY)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2DRAG)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2LONGPRESS)
-    PRINT_GESTRUE(WL_COMMON_GESTURE_TYPE_2TAP)
+        PRINT_GESTRUE(GESTURE_TYPE_SCRATCH)
+//        PRINT_GESTRUE(GESTURE_TYPE_3FLICK)
+        PRINT_GESTRUE(GESTURE_TYPE_MULTILONGPRESS)
+        PRINT_GESTRUE(GESTURE_TYPE_TAP)
+        PRINT_GESTRUE(GESTURE_TYPE_DRAG)
+//        PRINT_GESTRUE(GESTURE_TYPE_FLICK)
+//        PRINT_GESTRUE(GESTURE_TYPE_PINCH)
+//        PRINT_GESTRUE(GESTURE_TYPE_DOUBLECLICK)
+        PRINT_GESTRUE(GESTURE_TYPE_2FLICK)
+        PRINT_GESTRUE(GESTURE_TYPE_2ROTARY)
+        PRINT_GESTRUE(GESTURE_TYPE_2DRAG)
+//        PRINT_GESTRUE(GESTURE_TYPE_LONGPRESS)
+        PRINT_GESTRUE(GESTURE_TYPE_2LONGPRESS)
+        PRINT_GESTRUE(GESTURE_TYPE_2TAP)
     default:
         break;
     }
@@ -387,4 +398,3 @@ void Scene::onTimeOut(int id)
     UNUSED(id)
     m_enable = true;
 }
-

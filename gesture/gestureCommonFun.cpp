@@ -748,7 +748,190 @@ void GestureCommonFun::printGestureData(const Gesture_Event_Data* event)
     else {
 
     }
+}
 
+
+GestureObject* threeFlickGestureDataToObject(Gesture_Event_Data* event)
+{
+    if (!event) {
+        return 0;
+    }
+    ThreeFlickGesture* gesture = new ThreeFlickGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_3flick_gesture_data* data = reinterpret_cast<wl_3flick_gesture_data*>(event->data);
+
+    gesture->setPointNum(data->pointNum);
+    for (int i = 0; i < data->pointNum; i++) {
+        gesture->setPoint(i, data->points[i].x, data->points[i].y);
+    }
+    gesture->setCenter(data->center.x, data->center.y);
+    gesture->setLastCenter(data->lastCenter.x, data->lastCenter.y);
+    gesture->setStartCenter(data->startCenter.x, data->startCenter.y);
+    gesture->setOffset(data->offset.x, data->offset.y);
+    gesture->setLastOffset(data->lastOffset.x, data->lastOffset.y);
+    gesture->setStartOffset(data->startOffset.x, data->startOffset.y);
+    return gesture;
+}
+
+GestureObject* scratchGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* multiLongPressGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* tapGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* dragGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* flickGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* doubleClickGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* pinchGestureDataToObject(Gesture_Event_Data* event)
+{
+    if (!event) {
+        return 0;
+    }
+    PinchGesture* gesture = new PinchGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+
+    wl_pinch_gesture_data* data = reinterpret_cast<wl_pinch_gesture_data*>(event->data);
+    gesture->setCenterPoint({data->center.x, data->center.y});
+    gesture->setLastCenterPoint({data->lastCenter.x, data->lastCenter.y});
+    gesture->setStartCenterPoint({data->startCenter.x, data->startCenter.y});
+    gesture->setRotationAngle(data->rotationAngle);
+    gesture->setLastRotationAngle(data->lastRotationAngle);
+    gesture->setTotalRotationAngle(data->totalRotationAngle);
+    gesture->setScaleFactor(data->scaleFactor);
+    gesture->setLastScaleFactor(data->lastScaleFactor);
+    gesture->setTotalScaleFactor(data->totalScaleFactor);
+    gesture->setPoints(data->pos[0].x , data->pos[0].y,
+                       data->pos[1].x , data->pos[1].y);
+
+    return gesture;
+}
+
+GestureObject* twoFlickGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* rotateGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* twoDragGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* longPressGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+GestureObject* twoLongPressGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+
+GestureObject* twoTapGestureDataToObject(Gesture_Event_Data* data)
+{
+    return 0;
+}
+
+
+GestureObject* GestureCommonFun::gestureToObject(Gesture_Event_Data* data)
+{
+    if (!data) {
+        return 0;
+    }
+
+#define GESTURE_INFO(WL_TYPE, CLS_TYPE) \
+    case WL_TYPE: { \
+        GestureObject* object = new GestureObject(CLS_TYPE); \
+        object->setState((GESTURE_STATE)data->state); \
+        return object; \
+    }
+
+    if (data->gclass == WL_GESTURE_CLASS_SYSTEM) {
+        switch(data->gtype) {
+            case WL_SYSTEM_GESTURE_TYPE_FLICK:
+                return threeFlickGestureDataToObject(data);
+//            case WL_SYSTEM_GESTURE_TYPE_SCRATCH:
+//                return scratchGestureDataToObject(data);
+//            case WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS:
+//                return multiLongPressGestureDataToObject(data);
+
+//            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_FLICK, GESTURE_TYPE_3FLICK)
+            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_SCRATCH, GESTURE_TYPE_SCRATCH)
+            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS, GESTURE_TYPE_MULTILONGPRESS)
+            default:
+                return 0;
+        }
+    }
+    else {
+        switch(data->gtype) {
+//            case WL_COMMON_GESTURE_TYPE_TAP:
+//                return tapGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_DRAG:
+//                return dragGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_FLICK:
+//                return flickGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_PINCH:
+                return pinchGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
+//                return doubleClickGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_2FLICK:
+//                return twoFlickGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_2ROTARY:
+//                return rotateGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_2DRAG:
+//                return twoDragGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_LONGPRESS:
+//                return longPressGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_2LONGPRESS:
+//                return twoLongPressGestureDataToObject(data);
+//            case WL_COMMON_GESTURE_TYPE_2TAP:
+//                return twoTapGestureDataToObject(data);
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_TAP, GESTURE_TYPE_TAP)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DRAG, GESTURE_TYPE_DRAG)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_FLICK, GESTURE_TYPE_FLICK)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_PINCH, GESTURE_TYPE_PINCH)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DOUBLECLICK, GESTURE_TYPE_DOUBLECLICK)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2FLICK, GESTURE_TYPE_2FLICK)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2ROTARY, GESTURE_TYPE_2ROTARY)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2DRAG, GESTURE_TYPE_2DRAG)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_LONGPRESS, GESTURE_TYPE_LONGPRESS)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2LONGPRESS, GESTURE_TYPE_2LONGPRESS)
+            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2TAP, GESTURE_TYPE_2TAP)
+            default:
+                return 0;
+        };
+
+
+
+    }
+
+    return 0;
 }
 
 

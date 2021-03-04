@@ -33,11 +33,12 @@ void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)
 
     const Gesture_Event_Data_List* curList = list;
     while (curList) {
-        GestureEvent gestureev;
-        gestureev.gclass = curList->data->gclass;
-        gestureev.gtype = curList->data->gtype;
-        gestureev.state = curList->data->state;
-        Director::instance()->injectGesture(gestureev);
+        GestureObject* gesture = GestureCommonFun::gestureToObject(curList->data);
+        if (gesture) {
+            Director::instance()->injectGesture(*gesture);
+            delete gesture;
+            gesture = NULL;
+        }
         curList = curList->next;
     }
     // printf("\n onGestureEvent --- \n");
@@ -340,10 +341,10 @@ void Director::injectTouch(const TouchEvent& event)
     }
 }
 
-void Director::injectGesture(const GestureEvent& ev)
+void Director::injectGesture(const GestureObject& ev)
 {
     if (currentScene()) {
-        currentScene()->onGesture(ev);
+        currentScene()->onGesture(const_cast<GestureObject&>(ev));
     }
 }
 
