@@ -33,6 +33,7 @@ public:
     void removeTexture(Texture* texture);
     void removeTexture(const std::string &keyname);
 
+    GLuint createTexture(int w, int h);
 protected:
     typedef std::map<std::string, Texture*> TextureMap;
     TextureMap m_textures;

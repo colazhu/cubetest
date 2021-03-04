@@ -48,6 +48,29 @@ TextureCache::~TextureCache() {
     m_textures.clear();
 }
 
+GLuint TextureCache::createTexture(int w, int h)
+{
+//    if (w <=0 || h <=0) {
+//        return -1;
+//    }
+
+    GLuint ogltxtid = -1;
+    GLHook::glGenTextures(1, &ogltxtid);
+    GLHook::glBindTexture(GL_TEXTURE_2D, ogltxtid);
+    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    GLHook::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                     static_cast<GLsizei>(w),
+                     static_cast<GLsizei>(h),
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    return ogltxtid;
+
+}
+
 std::string TextureCache::id2name(int txtid)
 {
     char name[32] = {0};
@@ -70,18 +93,18 @@ Texture* TextureCache::addImage(const std::string &keyname, void* buffer, int w,
     GLuint old_tex;
     GLHook::glGetIntegerv(GL_TEXTURE_BINDING_2D, reinterpret_cast<GLint*>(&old_tex));
 
-    GLuint ogltxtid;
-    GLHook::glGenTextures(1, &ogltxtid);   
-    GLHook::glBindTexture(GL_TEXTURE_2D, ogltxtid);   
-    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);   
+    GLuint ogltxtid = createTexture(w, h);
+//    GLHook::glGenTextures(1, &ogltxtid);
+//    GLHook::glBindTexture(GL_TEXTURE_2D, ogltxtid);
+//    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    GLHook::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    GLHook::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                     static_cast<GLsizei>(w),
-                     static_cast<GLsizei>(h),
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+//    GLHook::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+//                     static_cast<GLsizei>(w),
+//                     static_cast<GLsizei>(h),
+//                     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
     GLint old_pack;
     GLHook::glGetIntegerv(GL_UNPACK_ALIGNMENT, &old_pack);

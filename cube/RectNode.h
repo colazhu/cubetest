@@ -10,7 +10,8 @@ public:
 
     virtual void onInitGeometryBuffer();
     virtual void onDraw();
-
+    void setTexture(int txtid);
+    void setRatio(float ratio);
 protected:
 	RectNode();
 
@@ -22,5 +23,8 @@ protected:
         Color4F colors;
     };
     V3F_N3F_T2F_C4F m_vertices[6];
+
+    int m_txtid;
+    float m_ratio;
 };
 #endif

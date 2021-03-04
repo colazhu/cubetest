@@ -86,6 +86,10 @@ private:
 
     void drawScene();
 
+    void initFBO();
+    void blit2Bmp();
+
+
     static Director* s_instance;
     DirectorPrivate* m_data;
     DISABLE_COPY(Director)

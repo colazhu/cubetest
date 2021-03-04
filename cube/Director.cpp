@@ -10,6 +10,7 @@
 #include "ProgramCache.h"
 #include "LightCache.h"
 #include "ActionCache.h"
+#include "RectNode.h"
 #include "gestureManager.h"
 #include "gestureObject.h"
 #include "gestureCommonFun.h"
@@ -63,6 +64,11 @@ struct MouseState
     float y;
 };
 
+enum {
+    TEXTURE_SCREEN = 1000,
+    TEXTURE_LIGHT = 1001,
+};
+
 class DirectorPrivate
 {
 public:
@@ -74,7 +80,13 @@ public:
       layout(LAYOUT_HALF_LANDSCAPE),
       winSize(0, 0, 800, 480),
       curcamera(0),
-      curscene(0)
+      curscene(0),
+      frameBufferScreen(0),
+      fboNodeScreen(0),
+      frameBufferLight(0),
+      fboNodeLight(0),
+      fboBmp(0),
+      fboBmpSize(0)
     {
 
     }
@@ -104,6 +116,13 @@ public:
 
     std::map<std::string, Scene*> scenes;
     Scene* curscene;
+
+    GLuint frameBufferScreen;
+    GLuint frameBufferLight;
+    RectNode* fboNodeScreen;
+    RectNode* fboNodeLight;
+    unsigned char* fboBmp;
+    int fboBmpSize;
 
     DISABLE_COPY(DirectorPrivate)
 };
@@ -174,6 +193,8 @@ void Director::init()
     m_data->curscene = new Scene(SCENE_DEFAULT);
     m_data->curscene->init();
     m_data->scenes[SCENE_DEFAULT] = m_data->curscene;
+
+    initFBO();
 }
 
 void Director::deinit()
@@ -424,24 +445,66 @@ bool Director::render()
     else {
         s_drawcount = 10;
     }
-//    LOG_BASE(" render ");
+    //    LOG_BASE(" render ");
+    GLHook::glEnable(GL_LINE_SMOOTH);
+    GLHook::glEnable(GL_MULTISAMPLE);
+
+#if 1
     GLHook::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     GLHook::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     GLHook::glClearDepthf(1.0f);
 
     setAlphaBlending(true);
     setDepthTest(true);
-    GLHook::glEnable(GL_LINE_SMOOTH);
-    GLHook::glEnable(GL_MULTISAMPLE);
-
 
     matrixStack().loadMatrix(MATRIX_STACK_PROJECTION, currentCamera()->projection());
     matrixStack().pushMatrix(MATRIX_STACK_MODELVIEW);
 
     drawScene();
-
     matrixStack().popMatrix(MATRIX_STACK_MODELVIEW);
 
+#else
+    {
+        Texture* txt = textureCache().getTexture(TEXTURE_SCREEN);
+        GLHook::glBindFramebuffer(GL_FRAMEBUFFER, m_data->frameBufferScreen);
+        GLHook::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, txt->ogltxtid, 0);
+
+            GLHook::glViewport(0, 0, m_data->winSize.size.width, m_data->winSize.size.height);
+            GLHook::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            GLHook::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GLHook::glClearDepthf(1.0f);
+
+            setAlphaBlending(true);
+            setDepthTest(true);
+
+            matrixStack().loadMatrix(MATRIX_STACK_PROJECTION, currentCamera()->projection());
+            matrixStack().pushMatrix(MATRIX_STACK_MODELVIEW);
+
+            drawScene();
+            matrixStack().popMatrix(MATRIX_STACK_MODELVIEW);
+
+        GLHook::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    {
+        GLHook::glBindFramebuffer(GL_FRAMEBUFFER, m_data->frameBufferLight);
+        GLHook::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureCache().getTexture(TEXTURE_LIGHT)->ogltxtid, 0);
+        GLHook::glViewport(0, 0, 256, 160);
+        GLHook::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GLHook::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        m_data->fboNodeLight->render();
+        // blit2Bmp();
+        GLHook::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    {
+        GLHook::glViewport(0, 0, m_data->winSize.size.width, m_data->winSize.size.height);
+        GLHook::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GLHook::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        m_data->fboNodeScreen->render();
+    }
+
+#endif
     return true;
 }
 
@@ -519,14 +582,71 @@ void Director::setAlphaBlending(bool on) {
 
 void Director::setDepthTest(bool on) {
     if (on) {
-        glClearDepthf(1.0f);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
+        GLHook::glClearDepthf(1.0f);
+        GLHook::glEnable(GL_DEPTH_TEST);
+        GLHook::glDepthFunc(GL_LEQUAL);
     }
     else {
-        glDisable(GL_DEPTH_TEST);
+        GLHook::glDisable(GL_DEPTH_TEST);
     }
     CHECK_GL_ERROR_DEBUG();
+}
+
+void Director::initFBO()
+{
+    GLHook::glGenFramebuffers(1, &m_data->frameBufferScreen);
+    textureCache().addImage(TEXTURE_SCREEN, textureCache().createTexture(m_data->winSize.size.width, m_data->winSize.size.height),
+                            m_data->winSize.size.width, m_data->winSize.size.height);
+
+    GLHook::glGenFramebuffers(1, &m_data->frameBufferLight);
+    textureCache().addImage(TEXTURE_LIGHT, textureCache().createTexture(256, 160), 256, 160);
+
+    const unsigned char bmphead[] = {
+        //  00    01    02    03    04    05    06    07    08    09    0A    0B    0C    0D    0E    0F
+            0x42, 0x4D, 0x36, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00, // 00
+            0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0xA0, 0x00, 0x00, 0x00, 0x01, 0x00, 0x20, 0x00, 0x00, 0x00, // 01
+            0x00, 0x00, 0x00, 0x70, 0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 02
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };                                                           // 03
+    //00: 02 ~ 05 : 54(0x36) + width*height*4
+    //01: 02 ~ 05 : width
+    //02: 06 ~ 09 : height
+
+    size_t bmpheadsize = sizeof(bmphead);
+    m_data->fboBmpSize = 256 * 160 * 4 + bmpheadsize;
+    m_data->fboBmp = new unsigned char[m_data->fboBmpSize];
+    memcpy(m_data->fboBmp, bmphead, bmpheadsize);
+
+    m_data->fboNodeScreen = new RectNode("FBOScreen", 0);
+    m_data->fboNodeScreen->initGeometryBuffer();
+    m_data->fboNodeScreen->setTexture(TEXTURE_SCREEN);
+
+    m_data->fboNodeLight = new RectNode("FBOLight", 0);
+    m_data->fboNodeLight->initGeometryBuffer();
+    m_data->fboNodeLight->setTexture(TEXTURE_SCREEN);
+}
+
+void Director::blit2Bmp()
+{
+    GLint pack_alignment_old;
+    GLHook::glGetIntegerv(GL_PACK_ALIGNMENT, &pack_alignment_old);
+    GLHook::glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    GLHook::glReadPixels(0, 0, static_cast<GLsizei>(256), static_cast<GLsizei>(160), GL_RGBA, GL_UNSIGNED_BYTE, m_data->fboBmp+54);
+    GLHook::glPixelStorei(GL_PACK_ALIGNMENT, pack_alignment_old);
+
+    for (size_t i = 54; i <  m_data->fboBmpSize; i = i + 4) {
+            unsigned char tmp = m_data->fboBmp[i];
+            m_data->fboBmp[i] = m_data->fboBmp[i + 2];
+            m_data->fboBmp[i + 2] = tmp;
+    }
+
+    static int s_count = 0;
+    char filePath[256] = {0};
+    snprintf(filePath, 256, "/home/colazhu/Engines/BmpClip/AAA%04d.bmp", s_count);
+    FILE* handle = fopen(filePath, "wb");
+    fwrite(m_data->fboBmp, m_data->fboBmpSize, 1, handle);
+    fclose(handle);
+    ++s_count;
+
 }
 
 //void Director::setProjection(PROJECTION_TYPE proj) {

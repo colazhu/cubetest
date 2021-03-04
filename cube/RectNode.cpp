@@ -2,7 +2,9 @@
 
 
 RectNode::RectNode(const std::string& name, Node* parent):
-Node(name, parent)
+Node(name, parent),
+m_txtid(0),
+m_ratio(1.0)
 {
 }
 
@@ -13,10 +15,10 @@ RectNode::~RectNode()
 
 void RectNode::onInitGeometryBuffer()
 {
-    float ratio = 9.0/16.0;
+    float ratio = 1.0/m_ratio;
     float x = 2.0*ratio;
     float y = 2.0;
-    float z = -1.0;
+    float z = 0.0;
     m_vertices[0].position.set(0, 0, z); // left-bottom
     m_vertices[0].texCoords = Tex2F(0, 0);
     m_vertices[1].position.set(0, y, z); // left-top
@@ -51,7 +53,7 @@ void RectNode::onDraw()
     p->use();
     p->setUniformsForBuiltins();
 
-    if (Texture* txt = Director::instance()->textureCache().getTexture(100)) {
+    if (Texture* txt = Director::instance()->textureCache().getTexture(m_txtid)) {
         txt->bind();
     }
 
@@ -67,4 +69,14 @@ void RectNode::onDraw()
     GLHook::glEnable(GL_DEPTH_TEST);
     CHECK_GL_ERROR_DEBUG();
 
+}
+
+void RectNode::setTexture(int txtid)
+{
+    m_txtid = txtid;
+}
+
+void RectNode::setRatio(float ratio)
+{
+    m_ratio = ratio;
 }

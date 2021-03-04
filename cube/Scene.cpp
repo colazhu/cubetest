@@ -40,6 +40,8 @@ void Scene::init()
 
     RectNode* background = new RectNode("background", this);
     background->initGeometryBuffer();
+    background->setRatio(16.0/9.0);
+    background->setTexture(100); // background textureid
     
     LightCache& lightcache = Director::instance()->lightCache();
     lightcache.setGlobalAmbientColor(Color4F(0.5, 0.5, 0.5, 1.0));
