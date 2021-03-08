@@ -25,6 +25,7 @@ public:
     void disableCommonGesture(void *surface, uint32_t mask);
     uint32_t getCommonMask();
     void onSurfaceDestroy(void *surface);
+    bool isMultiTouching();
     void processTouchEvent(int eventAction,
                            void *data,
                            int id, int x, int y, long long when = 0);

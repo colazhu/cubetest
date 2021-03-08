@@ -773,32 +773,32 @@ GestureObject* threeFlickGestureDataToObject(Gesture_Event_Data* event)
     return gesture;
 }
 
-GestureObject* scratchGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* scratchGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* multiLongPressGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* multiLongPressGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* tapGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* tapGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* dragGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* dragGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* flickGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* flickGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* doubleClickGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* doubleClickGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
@@ -827,19 +827,37 @@ GestureObject* pinchGestureDataToObject(Gesture_Event_Data* event)
     return gesture;
 }
 
-GestureObject* twoFlickGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* twoFlickGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* rotateGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* rotateGestureDataToObject(Gesture_Event_Data* event)
 {
     return 0;
 }
 
-GestureObject* twoDragGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* twoDragGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+    TwoDragGesture* gesture = new TwoDragGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+
+    wl_2drag_gesture_data* data = reinterpret_cast<wl_2drag_gesture_data*>(event->data);
+
+    gesture->setPoint(0, data->pos[0].x, data->pos[0].y);
+    gesture->setPoint(1, data->pos[1].x, data->pos[1].y);
+
+    gesture->setCenter(data->center.x, data->center.y);
+    gesture->setLastCenter(data->lastCenter.x, data->lastCenter.y);
+    gesture->setStartCenter(data->startCenter.x, data->startCenter.y);
+
+    gesture->setOffset(data->offset.x, data->offset.y);
+    gesture->setLastOffset(data->lastOffset.x, data->lastOffset.y);
+    gesture->setStartOffset(data->startOffset.x, data->startOffset.y);
+    return gesture;
 }
 
 GestureObject* longPressGestureDataToObject(Gesture_Event_Data* data)
@@ -904,8 +922,8 @@ GestureObject* GestureCommonFun::gestureToObject(Gesture_Event_Data* data)
 //                return twoFlickGestureDataToObject(data);
 //            case WL_COMMON_GESTURE_TYPE_2ROTARY:
 //                return rotateGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_2DRAG:
-//                return twoDragGestureDataToObject(data);
+           case WL_COMMON_GESTURE_TYPE_2DRAG:
+               return twoDragGestureDataToObject(data);
 //            case WL_COMMON_GESTURE_TYPE_LONGPRESS:
 //                return longPressGestureDataToObject(data);
 //            case WL_COMMON_GESTURE_TYPE_2LONGPRESS:
@@ -919,7 +937,7 @@ GestureObject* GestureCommonFun::gestureToObject(Gesture_Event_Data* data)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DOUBLECLICK, GESTURE_TYPE_DOUBLECLICK)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2FLICK, GESTURE_TYPE_2FLICK)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2ROTARY, GESTURE_TYPE_2ROTARY)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2DRAG, GESTURE_TYPE_2DRAG)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2DRAG, GESTURE_TYPE_2DRAG)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_LONGPRESS, GESTURE_TYPE_LONGPRESS)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2LONGPRESS, GESTURE_TYPE_2LONGPRESS)
             GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2TAP, GESTURE_TYPE_2TAP)

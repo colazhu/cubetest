@@ -316,6 +316,16 @@ void GestureManager::setNotifyFunc(FUNC_NOTIFY_GESTURE_EVENT notify)
 //	mEventLoop = eventLoop;
 //}
 
+bool GestureManager::isMultiTouching()
+{
+    int validPoints = 0;
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].id != -1) {
+            ++validPoints;
+        }
+    }
+    return validPoints > 1;
+}
 
 int GestureManager::processSingleTouchDown(int id, int x, int y)
 {

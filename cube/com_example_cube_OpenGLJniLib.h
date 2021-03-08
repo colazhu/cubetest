@@ -65,6 +65,14 @@ JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_rotateCube
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    isEnable
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_example_cube_OpenGLJniLib_isEnable
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    setMode
  * Signature: (I)V
  */
@@ -143,7 +151,13 @@ JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_init
 JNIEXPORT void JNICALL Java_com_example_cube_OpenGLJniLib_deinit
   (JNIEnv *, jclass);
 
-
+/*
+ * Class:     com_example_cube_OpenGLJniLib
+ * Method:    getEvent
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_example_cube_OpenGLJniLib_getEvent
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

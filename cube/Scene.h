@@ -16,11 +16,12 @@ public:
 
     virtual void onUpdate(float dt);
     virtual void onTouch(TouchAction touchevent, float x, float y);
-    virtual void onGesture(GestureObject& ev);
+    virtual void onGesture(const GestureObject& ev_const);
     virtual void onTimeOut(int id);
 
     void updateArcball();
 
+    bool isEnable();
     void setLayout(int layout);
 
     enum GYROMODE_TYPE {
@@ -34,10 +35,11 @@ public:
     void setCubePlaneTexture(int planeid, int txtid);
     void addCubeCallback(CubeCallback* cb);
     int popSelectedTexture();
-
+    int popEvent();
 protected:    
     void disableInTime(float ms);
     void gyroCube(int mode, bool forward, float ms);
+    void zoomCamera(float from, float to, float ms);
     Arcball* m_arcball;
     int m_gyroMode;
     bool m_enable;
@@ -49,6 +51,7 @@ protected:
     Matrix m_rotateMat;
     CubeCallback* m_cb;
     int m_txtIdSelected;
+    int m_eventId;
 };
 
 #endif // SCENE_H

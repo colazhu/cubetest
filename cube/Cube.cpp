@@ -359,7 +359,7 @@ void Cube::onDraw()
     }
     else {
         drawCube();
-        drawIntersection();
+        // drawIntersection();
     }
 }
 
@@ -511,10 +511,14 @@ void Cube::doGyro()
     if (m_intersectPlane == PLANE_INVALID) {
         return;
     }
-
+    int layout = Director::instance()->getLayout();
     Vector3 normalDst(0, 0, 1);    
     Vector3 upDst(0, 1, 0);
-    upDst = getCamera()->up();
+    Matrix matUpDst;    
+    if (LAYOUT_FULL_PORTRAIT == layout || LAYOUT_HALF_PORTRAIT == layout) {
+        matUpDst.rotateZ(MATH_DEG_TO_RAD(90));
+    }
+    matUpDst.transformVector(getCamera()->up(), &upDst);
 //    m_matUserRotate.transformVector(&upDst);
     Vector3 normalSrc, upSrc;
     getIntersectPlaneVector(normalSrc, upSrc);

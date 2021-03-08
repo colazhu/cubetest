@@ -6,21 +6,50 @@
 #include "Cube.h"
 #include "CubePlane.h"
 #include "RectNode.h"
+#include "gesturePublicDef.h"
+#include "gestureDef.h"
+#include "gestureObject.h"
+#include "pinchGesture.h"
+#include "threeFlickGesture.h"
+#include "twoDragGesture.h"
 
 #define CUBE_SCALE 6.0f
 #define CHILD_CUBE "Cube"
 #define CHILD_PLANE "CubePlane"
 #define LIGHTCOLOR Color4F(1.0, 1.0, 1.0, 1.0)
 
+class CameraZTransition : public IntervalAction
+{
+public:
+    CameraZTransition(Node* node, float startZ, float endZ):
+        IntervalAction(node),
+        m_startZ(startZ),
+        m_endZ(endZ)
+    {
+        m_camera = Director::instance()->currentCamera();
+    }
+
+    ~CameraZTransition() {}
+
+    virtual void onUpdate(Node* target, float dt, float time) {
+        LOG_BASE("onUpdate:%p %.1f %.1f z:%.1f %.1f %.1f", target, dt, time, m_startZ, m_endZ, m_startZ*(1.0 - time) + m_endZ * time);
+        m_camera->setEye(0, 0, m_startZ*(1.0 - time) + m_endZ * time);
+    }
+    Camera* m_camera;
+    float m_startZ;
+    float m_endZ;
+};
+
 Scene::Scene(const std::string& name):
     Node(name, 0),
     m_arcball(0),
-    m_gyroMode(GYROMODE_TWO),
+    m_gyroMode(GYROMODE_ONE),
     m_enable(true),
     m_isCubeMode(true),
     m_flicking(false),
     m_cb(NULL),
-    m_txtIdSelected(-1)
+    m_txtIdSelected(-1),
+    m_eventId(-1)
 {
 
 }
@@ -115,6 +144,11 @@ void Scene::deinit()
 
 }
 
+bool Scene::isEnable()
+{
+    return m_enable;
+}
+
 void Scene::setGyroMode(int mode)
 {
     m_gyroMode = mode;
@@ -178,25 +212,31 @@ void Scene::onTouch(TouchAction touchevent, float x, float y)
     }
 }
 
-#include "gesturePublicDef.h"
-#include "gestureDef.h"
-#include "gestureObject.h"
-
-void Scene::onGesture(GestureObject& ev)
+void Scene::onGesture(const GestureObject& ev_const)
 {
     if (!m_enable) {
         return;
     }
 
+    GestureObject& ev = const_cast<GestureObject&>(ev_const);
+
 #define PRINT_GESTRUE(GETSTURE_NAME) \
     case GETSTURE_NAME: { LOG_BASE("%s state[%d]", #GETSTURE_NAME, ev.getState()); break; }
     
     switch(ev.getType()) {
-        case GESTURE_TYPE_3FLICK:
-        {
-            LOG_BASE("GESTURE_TYPE_3FLICK state[%d]", ev.getState());
-        }
-            break;
+//        case GESTURE_TYPE_3FLICK:
+//        {
+//            LOG_BASE("GESTURE_TYPE_3FLICK state[%d]", ev.getState());
+//            ThreeFlickGesture& threeflick = static_cast<ThreeFlickGesture&>(ev);
+//            if (ev.getState() == GESTURE_STATE_UPDATED) {
+//                 GesturePoint& point = threeflick.getOffset();
+//                 LOG_BASE("threeflick offset:x:%d y:%d", point.x, point.y);
+//                 if (MATH_ABS(point.x) > MATH_ABS(point.y)*2) {
+//                     m_eventId = point.x > 0 ? CUBE_EVENT_3FLICK_RIGHT : CUBE_EVENT_3FLICK_LEFT;
+//                 }
+//            }
+//        }
+//            break;
         case GESTURE_TYPE_DOUBLECLICK:
         {
             LOG_BASE("GESTURE_TYPE_DOUBLECLICK");
@@ -215,7 +255,7 @@ void Scene::onGesture(GestureObject& ev)
         {
             LOG_BASE("GESTURE_TYPE_LONGPRESS state[%d]", ev.getState());
             int txtid = -1;
-            if (ev.getState() == GESTURE_STATE_UPDATED) {
+            if (GESTURE_STATE_STARTED == ev.getState()) {
                 txtid = longclickScene();
             }
 
@@ -230,10 +270,33 @@ void Scene::onGesture(GestureObject& ev)
         case GESTURE_TYPE_PINCH:
         {
             LOG_BASE("GESTURE_TYPE_PINCH state[%d]", ev.getState());
+            PinchGesture& pinch = static_cast<PinchGesture&>(ev);
+            LOG_BASE("pinch scale:%.2f, last:%.2f, total:%.2f", pinch.getScaleFactor(), pinch.getLastScaleFactor(), pinch.getTotalScaleFactor());
+            if (GESTURE_STATE_FINISHED == ev.getState()) {
+                Camera* camera = Director::instance()->currentCamera();
+                float deltaZ = (pinch.getScaleFactor() - 1.0f) * 10;
+                float cameraZ = MATH_MIN(camera->eye().z - deltaZ, 20.0f);
+                cameraZ = MATH_MAX(cameraZ, 11.0f);
+                zoomCamera(camera->eye().z, cameraZ, 500);
+            }
+        }
+        break;
+        case GESTURE_TYPE_2DRAG:
+        {
+            LOG_BASE("GESTURE_TYPE_2DRAG state[%d]", ev.getState());
+            TwoDragGesture& twoDrag = static_cast<TwoDragGesture&>(ev);
+            if (GESTURE_STATE_FINISHED == ev.getState()) {
+                GesturePoint& point = twoDrag.getOffset();
+                LOG_BASE("twoDrag offset x:%.2f, y:%.2f", point.x, point.y);
+
+                 if (MATH_ABS(point.x) > MATH_ABS(point.y)*2) {
+                     m_eventId = point.x > 0 ? CUBE_EVENT_3FLICK_RIGHT : CUBE_EVENT_3FLICK_LEFT;
+                 }
+            }
         }
         break;
         PRINT_GESTRUE(GESTURE_TYPE_SCRATCH)
-//        PRINT_GESTRUE(GESTURE_TYPE_3FLICK)
+        PRINT_GESTRUE(GESTURE_TYPE_3FLICK)
         PRINT_GESTRUE(GESTURE_TYPE_MULTILONGPRESS)
         PRINT_GESTRUE(GESTURE_TYPE_TAP)
         PRINT_GESTRUE(GESTURE_TYPE_DRAG)
@@ -242,13 +305,13 @@ void Scene::onGesture(GestureObject& ev)
 //        PRINT_GESTRUE(GESTURE_TYPE_DOUBLECLICK)
         PRINT_GESTRUE(GESTURE_TYPE_2FLICK)
         PRINT_GESTRUE(GESTURE_TYPE_2ROTARY)
-        PRINT_GESTRUE(GESTURE_TYPE_2DRAG)
+//        PRINT_GESTRUE(GESTURE_TYPE_2DRAG)
 //        PRINT_GESTRUE(GESTURE_TYPE_LONGPRESS)
         PRINT_GESTRUE(GESTURE_TYPE_2LONGPRESS)
         PRINT_GESTRUE(GESTURE_TYPE_2TAP)
     default:
         break;
-    }
+    }    
 }
 
 void Scene::onUpdate(float dt)
@@ -327,6 +390,14 @@ void Scene::flickCube(bool run)
     }
 }
 
+void Scene::zoomCamera(float from, float to, float ms)
+{
+    CameraZTransition* action = new CameraZTransition(this, from, to);
+    action->initTimeline(ms, true);
+    runAction(action);
+    disableInTime(ms);
+}
+
 void Scene::gyroCube(int mode, bool forward, float ms)
 {
     Cube* cube = static_cast<Cube*>(getChild(CHILD_CUBE));
@@ -384,6 +455,13 @@ int Scene::popSelectedTexture()
 {
     int ret = m_txtIdSelected;
     m_txtIdSelected = -1;
+    return ret;
+}
+
+int Scene::popEvent()
+{
+    int ret = m_eventId;
+    m_eventId = -1;
     return ret;
 }
 

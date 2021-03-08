@@ -144,6 +144,19 @@ void Java_com_example_cube_OpenGLJniLib_rotateCube
 
 /*
  * Class:     com_example_cube_OpenGLJniLib
+ * Method:    isEnable
+ * Signature: ()Z
+ */
+jboolean JNICALL Java_com_example_cube_OpenGLJniLib_isEnable
+  (JNIEnv *env, jclass cls)
+{  
+    bool enable = Director::instance()->isEnable(); 
+    LOGJNI("isEnable:%d", enable);
+    return enable;
+}
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
  * Method:    setMode
  * Signature: (I)V
  */
@@ -271,6 +284,20 @@ void Java_com_example_cube_OpenGLJniLib_deinit
     LOGJNI("deinit");
     // Director::instance()->deinit();
 }
+
+/*
+ * Class:     com_example_cube_OpenGLJniLib
+ * Method:    getEvent
+ * Signature: ()I
+ */
+jint JNICALL Java_com_example_cube_OpenGLJniLib_getEvent
+  (JNIEnv *env, jclass cls)
+{    
+    int event = Director::instance()->popEvent();
+    LOGJNI("getEvent:%d", event);
+    return event;
+}
+
 #ifdef __cplusplus
 }
 

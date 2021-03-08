@@ -260,7 +260,7 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
 }
 
 #define DEFAULT_SIZE_WIDTH (800)
-#define DEFAULT_SIZE_HEIGTH (480)
+#define DEFAULT_SIZE_HEIGHT (480)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 
@@ -306,26 +306,27 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
 
 int main(int argc, char** argv)
 {  
-//    GestureManager::instance()->setFoucsSurfaceRegion(new GestureRegion(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGTH));
+//    GestureManager::instance()->setFoucsSurfaceRegion(new GestureRegion(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT));
 //    GestureManager::instance()->setNotifyFunc(onGestureEvent);
 
     glfwInit();
 //    CEGuiRender render;
 
     do {
-        GLFWwindow* window = initGLWindow(TITLE_NAME, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGTH);
+        GLFWwindow* window = initGLWindow(TITLE_NAME, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
         if (NULL == window) {
             break;
         }
 //        GestureManager::instance()->enableSystemGesture(WL_SYSTEM_GESTURE_TYPE_FLAG_ALL);
 //        GestureManager::instance()->enableCommonGesture(window, WL_COMMON_GESTURE_TYPE_FLAG_ALL);
 
-        glViewport(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGTH);
+        glViewport(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
 //        render.initRender();
 //        render.createRootWindow();
 
         Director::instance()->init();
-        Director::instance()->setWindowSize(DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGTH);
+        Director::instance()->setWindowSize(DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
+        Director::instance()->setTouchRegion(160, 0, DEFAULT_SIZE_HEIGHT, DEFAULT_SIZE_HEIGHT);
 //        loadBmp(0, "/xxxx/Cube.bmp", 150, 150);
 //        for (int i = 0; i < 6; ++i)
 //        Director::instance()->setPlaneTexture(i, 0);

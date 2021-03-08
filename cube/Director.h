@@ -68,6 +68,8 @@ public:
     void setPlaneTexture(int planeid, int txtid);
     void addTexture(int txtid, int gltxtid, int w, int h);
     void addTexture(int txtid, void* buff, int w, int h);
+    
+    bool isEnable();
     void rotateCube(float degrees, float ms);
     void setMode(int mode);
     void setLayout(int layout);
@@ -76,7 +78,7 @@ public:
 
     void addCubeCallback(CubeCallback* cb);
     int popSelectedTexture();
-    
+    int popEvent();    
 private:
     Director();
     void setDepthTest(bool on);
@@ -86,10 +88,6 @@ private:
     void cleanDeadPool();
 
     void drawScene();
-
-    void initFBO();
-    void blit2Bmp();
-
 
     static Director* s_instance;
     DirectorPrivate* m_data;
