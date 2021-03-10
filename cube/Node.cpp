@@ -29,7 +29,7 @@ m_dirtys(FLAGS_DIRTY_MASK)
 {
 
     setParent(parent);
-    // m_material.setColor(Color4F(1.0, 1.0, 1.0, 1.0));
+    m_material.setColor(Color4F(0.0, 0.0, 0.0, 1.0));
     // connect(&m_camera, SIGNAL(cameraChanged()), this, SLOT(cameraUpdated()));
 }
 

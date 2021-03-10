@@ -94,12 +94,20 @@ struct Color4F
     bool operator!=(const Color4F& right) const;
     bool operator!=(const Color3B& right) const;
     bool operator!=(const Color4B& right) const;
+    const Color4F operator+(const Color4F& v) const;
 
     static inline Vector4 multiply(const Vector4& aa, const Vector4& bb) {
         return Vector4(aa.x * bb.x,
                        aa.y * bb.y,
                        aa.z * bb.z,
                        aa.w * bb.w);
+    }
+
+    static inline Color4F multiply(const Color4F& aa, const Color4F& bb) {
+        return Color4F(aa.r * bb.r,
+                       aa.g * bb.g,
+                       aa.b * bb.b,
+                       aa.a * bb.a);
     }
 
     bool equals(const Color4F &other)

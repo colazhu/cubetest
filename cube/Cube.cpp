@@ -39,11 +39,11 @@ Cube::Cube(const std::string& name, int stepsPerPlane, Node* parent):
     m_touchDownPlane(-1)
 {
     m_vertices = new V3F_N3F_T2F_C4F[m_verticesNum];
-    Vector4 color(180.0/255.0, 180.0/255.0, 180.0/255.0, 180.0/255.0);
-    m_material.setAmbient(color * 0.8);
-    m_material.setDiffuse(color * 0.5);
-    m_material.setSpecular(color * 2.0, 0.5);
-//    m_material.setEmssion(Color4F(25.0/255.0, 25.0/255.0, 25.0/255.0, 25.0/255.0));
+    Vector4 color(1.0, 1.0, 1.0, 1.0);
+    m_material.setAmbient(color * 1.0);
+    m_material.setDiffuse(color * 1.0);
+    m_material.setSpecular(color * 1.0, 50.0);
+    // m_material.setEmssion(color);
 }
 
 Cube::~Cube()
@@ -361,6 +361,8 @@ void Cube::onDraw()
         drawCube();
         // drawIntersection();
     }
+
+    // drawDummy();
 }
 
 void Cube::setDummyMode(bool enable)
@@ -389,10 +391,42 @@ void Cube::drawDummy()
         matrix2World.transformPoint(m_vertices[i].position, &pos);
         matrix2World.transformVector(m_vertices[i].normal, &normal);
         normal.normalize();
-        if (i == 0 && name() == "Cube") {
-            LOG_BASE("normal: %.1f %.1f %.1f", normal.x, normal.y, normal.z);
-        }
+//        if (i == 0 && name() == "Cube") {
+//            LOG_BASE("normal: %.1f %.1f %.1f", normal.x, normal.y, normal.z);
+//        }
         m_vertices[i].colors = lightcache.doLighting(m_material, Vector4(pos), normal, eye);
+        m_vertices[i].colors.a = 1.0;
+//        LOG_BASE("color[i]: %.1f %.1f %.1f", i, m_vertices[i].colors.r, m_vertices[i].colors.g, m_vertices[i].colors.b);
+    }
+
+    const Color4F planeColors[] = {
+//        Color4F::BLACK,
+//        Color4F::BLACK,
+//        Color4F::BLACK,
+//        Color4F::BLACK,
+//        Color4F::BLACK,
+//        Color4F::BLACK
+
+        Color4F::WHITE,
+        Color4F::WHITE,
+        Color4F::WHITE,
+        Color4F::WHITE,
+        Color4F::WHITE,
+        Color4F::WHITE
+
+//        Color4F::WHITE,
+//        Color4F::GRAY,
+//        Color4F::RED,
+//        Color4F::BLUE,
+//        Color4F::YELLOW,
+//        Color4F::ORANGE
+    };
+
+    for (int i = 0; i < PLANE_NUM; ++i) {
+        for (int j = i*m_verticesPerPlane; j < i*m_verticesPerPlane + m_verticesPerPlane; ++j) {
+            // m_vertices[j].colors =  m_vertices[j].colors + planeColors[i];
+            m_vertices[j].colors = Color4F::multiply(m_vertices[j].colors, planeColors[i]);
+        }
     }
 
     GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);

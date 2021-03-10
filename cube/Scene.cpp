@@ -16,7 +16,12 @@
 #define CUBE_SCALE 6.0f
 #define CHILD_CUBE "Cube"
 #define CHILD_PLANE "CubePlane"
+#define AMBIENTCOLOR Color4F(0.5, 0.5, 0.5, 1.0)
 #define LIGHTCOLOR Color4F(1.0, 1.0, 1.0, 1.0)
+
+#define AMBIENTCOLOR_TEST Color4F(1.0, 1.0, 1.0, 1.0)
+#define LIGHTCOLOR1 Color4F(1.0, 0.0, 0.0, 1.0)
+#define LIGHTCOLOR2 Color4F(0.0, 0.0, 1.0, 1.0)
 #define CAMERA_Z_MAX (20.0f)
 #define CAMERA_Z_MIN (11.0f)
 
@@ -68,13 +73,15 @@ void Scene::init()
 {
     updateArcball();
 
+    Director* director = Director::instance();
     RectNode* background = new RectNode("background", this);
+    Rect winrect = director->getWindowSize();
     background->initGeometryBuffer();
-    background->setRatio(16.0/10.0);
+    background->setRatio(winrect.size.width/winrect.size.height);
     background->setTexture(100); // background textureid
     
-    LightCache& lightcache = Director::instance()->lightCache();
-    lightcache.setGlobalAmbientColor(Color4F(0.5, 0.5, 0.5, 1.0));
+    LightCache& lightcache = director->lightCache();
+    lightcache.setGlobalAmbientColor(AMBIENTCOLOR);
 
     float posscale = 1.5;
     Cube* cb_light0 = new Cube("cb_light0", 1, this);
@@ -109,6 +116,12 @@ void Scene::init()
     pointlight1->setSpotExponent(0.5);
     pointlight1->setIntensity(5);
     lightcache.addLight(LIGHT_ID_01, pointlight1);
+
+//    lightcache.setGlobalAmbientColor(AMBIENTCOLOR_TEST);
+//    pointlight0->setColor(LIGHTCOLOR1);
+//    pointlight1->setColor(LIGHTCOLOR2);
+//    cb_light0->show();
+//    cb_light1->show();
 
 //    Light* pointlight2 = Light::createPointLight(Vector3::ZERO, cb_light2);
 //    pointlight2->setColor(LIGHTCOLOR);

@@ -6,6 +6,7 @@ attribute vec2 a_texCoord;
 attribute vec4 a_color;
 varying vec2 v_texCoord;
 varying vec4 v_color;
+varying vec4 v_specular;
 varying float v_factor;
 void main(void) {
   vec4 pos_in_world = uc_MVMatrix * vec4(a_position, 1.0);
@@ -22,7 +23,7 @@ void main(void) {
       v_factor = -1.0;
   }
 
-  v_color = doLighting(pos_in_world, normal_in_world.xyz, uc_Eye.xyz) * a_color;
+  v_color = doLighting(pos_in_world, normal_in_world.xyz, uc_Eye.xyz, v_specular) * a_color;
   v_texCoord = a_texCoord;
   gl_Position = uc_MVPMatrix*vec4(a_position, 1.0);
   // gl_Position.y = -gl_Position.y; //enable the code in QT

@@ -63,7 +63,7 @@ static MouseEvent s_mouseevent;
 //}
 
 void onMouseEvent(const MouseEvent& event) {
-    printf("\n onMouseEvent: event:%d x:%d, y:%d flg:0x%08x +++ \n", event.event, event.x, event.y, event.status);
+    // printf("\n onMouseEvent: event:%d x:%d, y:%d flg:0x%08x +++ \n", event.event, event.x, event.y, event.status);
 
     TouchAction touchevent;
 //    int motionEvent = 0;

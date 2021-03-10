@@ -187,6 +187,17 @@ bool Color4F::operator!=(const Color4B& right) const
     return !(*this == right);
 }
 
+ const Color4F Color4F::operator+(const Color4F& v) const
+ {
+    return Color4F(
+                this->r + v.r,
+                this->g + v.g,
+                this->b + v.b,
+                this->a + v.a
+                );
+
+ }
+
 /**
  * Color constants
  */

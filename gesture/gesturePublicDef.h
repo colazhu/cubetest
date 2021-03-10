@@ -195,6 +195,13 @@ struct wl_3flick_gesture_data {
 struct wl_scratch_gesture_data {
     int pointNum;
     struct wl_gesture_point points[WL_SCRATCH_GESTURE_MAX_POINTS];
+    struct wl_gesture_point startpoints[WL_SCRATCH_GESTURE_MAX_POINTS];
+    struct wl_gesture_point center;
+    struct wl_gesture_point lastCenter;
+    struct wl_gesture_point startCenter;
+    struct wl_gesture_point_offset offset;
+    struct wl_gesture_point_offset lastOffset;
+    struct wl_gesture_point_offset startOffset;
 };
 
 #define WL_MULTILONGPRESS_GESTURE_MAX_POINTS  5

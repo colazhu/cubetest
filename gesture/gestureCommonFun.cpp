@@ -575,12 +575,36 @@ scratchGestureToData(ScratchGesture* gesture)
 	wl_scratch_gesture_data* data = reinterpret_cast<wl_scratch_gesture_data*>(event->data);
 	event->state = gesture->getState();
 
+    data->center.x = gesture->getCenter().x;
+    data->center.y = gesture->getCenter().y;
+
+    data->lastCenter.x = gesture->getLastCenter().x;
+    data->lastCenter.y = gesture->getLastCenter().y;
+
+    data->startCenter.x = gesture->getStartCenter().x;
+    data->startCenter.y = gesture->getStartCenter().y;
+
+    data->offset.x = gesture->getOffset().x;
+    data->offset.y = gesture->getOffset().y;
+
+    data->lastOffset.x = gesture->getLastOffset().x;
+    data->lastOffset.y = gesture->getLastOffset().y;
+
+    data->startOffset.x = gesture->getStartOffset().x;
+    data->startOffset.y = gesture->getStartOffset().y;
+
 	GesturePoint points[5];
 	gesture->getPoints(points, 5, &(data->pointNum));
 	for (int i = 0; i < data->pointNum; i++) {
 		data->points[i].x = points[i].x;
 		data->points[i].y = points[i].y;
 	}
+
+    for (int i = 0; i < 5; i++) {
+        GesturePoint& points = gesture->getStartPoint(i);
+        data->startpoints[i].x = points.x;
+        data->startpoints[i].y = points.y;
+    }
 
 	return event;
 }
@@ -775,32 +799,117 @@ GestureObject* threeFlickGestureDataToObject(Gesture_Event_Data* event)
 
 GestureObject* scratchGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    ScratchGesture* gesture = new ScratchGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_scratch_gesture_data* data = reinterpret_cast<wl_scratch_gesture_data*>(event->data);
+
+    gesture->setCenter(data->center.x, data->center.y);
+    gesture->setLastCenter(data->lastCenter.x, data->lastCenter.y);
+    gesture->setStartCenter(data->startCenter.x, data->startCenter.y);
+    gesture->setOffset(data->offset.x, data->offset.y);
+    gesture->setLastOffset(data->lastOffset.x, data->lastOffset.y);
+    gesture->setStartOffset(data->startOffset.x, data->startOffset.y);
+
+    for (int i = 0; i < 5; i++) {
+        gesture->setStartPoint(i, data->startpoints[i].x, data->startpoints[i].y);
+    }
+
+
+    for (int i = 0; i < data->pointNum; i++) {
+        gesture->setPoint(i, data->points[i].x, data->points[i].y);
+    }
+
+    return gesture;
 }
 
 GestureObject* multiLongPressGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    MultiLongPressGesture* gesture = new MultiLongPressGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_multilongpress_gesture_data* data = reinterpret_cast<wl_multilongpress_gesture_data*>(event->data);
+
+    gesture->setPointNum(data->pointNum);
+
+    for(int i = 0;i < data->pointNum; ++i) {
+        gesture->setPoint(i, data->pos[i].x, data->pos[i].y);
+    }
+    // todo cola
+//    struct timeval timeCur;
+//    gettimeofday(&timeCur, NULL);
+//    struct timeval pressTime = gesture->setPressTime();
+//    data->pressTime = (timeCur.tv_sec * 1000 + timeCur.tv_usec / 1000) - (pressTime.tv_sec * 1000 + pressTime.tv_usec / 1000);
+    gesture->setActionInterval(data->actionInterval);
+    return gesture;
 }
 
 GestureObject* tapGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    TapGesture* gesture = new TapGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_tap_gesture_data* data = reinterpret_cast<wl_tap_gesture_data*>(event->data);
+    gesture->setPoint(data->pos.x, data->pos.y);
+    return gesture;
 }
 
 GestureObject* dragGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    DragGesture* gesture = new DragGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_drag_gesture_data* data = reinterpret_cast<wl_drag_gesture_data*>(event->data);
+
+    gesture->setStartPos(data->startPos.x, data->startPos.y);
+    gesture->setLastPos(data->lastPos.x, data->lastPos.y);
+    gesture->setPoint(data->pos.x, data->pos.y);
+
+    return gesture;
 }
 
 GestureObject* flickGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    FlickGesture* gesture = new FlickGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_flick_gesture_data* data = reinterpret_cast<wl_flick_gesture_data*>(event->data);
+
+    gesture->setSpeed(data->speed);
+    gesture->setAngle(data->angle);
+    gesture->setPoint(data->pos.x, data->pos.y);
+    return gesture;
 }
 
 GestureObject* doubleClickGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    DoubleClickGesture* gesture = new DoubleClickGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_doubleClick_gesture_data* data = reinterpret_cast<wl_doubleClick_gesture_data*>(event->data);
+
+    gesture->setPoint1(data->pos.x, data->pos.y);
+    gesture->setPoint2(data->pos.x, data->pos.y);
+
+    return gesture;
 }
 
 GestureObject* pinchGestureDataToObject(Gesture_Event_Data* event)
@@ -829,12 +938,45 @@ GestureObject* pinchGestureDataToObject(Gesture_Event_Data* event)
 
 GestureObject* twoFlickGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    TwoFlickGesture* gesture = new TwoFlickGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_2flick_gesture_data* data = reinterpret_cast<wl_2flick_gesture_data*>(event->data);
+
+    gesture->setPoint(0, data->pos[0].x, data->pos[0].y);
+    gesture->setPoint(1, data->pos[1].x, data->pos[1].y);
+    gesture->setCenter(data->center.x, data->center.y);
+    gesture->setSpeed(data->speed);
+    gesture->setAngle(data->angle);
+
+    return gesture;
 }
 
 GestureObject* rotateGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+
+    RotateGesture* gesture = new RotateGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+    wl_2rotary_gesture_data* data = reinterpret_cast<wl_2rotary_gesture_data*>(event->data);
+
+
+    gesture->setCenter({ data->center.x, data->center.y});
+    gesture->setLastCenter( { data->lastCenter.x, data->lastCenter.y});
+    gesture->setStartCenter( {data->startCenter.x, data->startCenter.y});
+    gesture->setRotationAngle(data->rotationAngle);
+    gesture->setLastRotationAngle(data->lastRotationAngle);
+    gesture->setTotalRotationAngle(data->totalRotationAngle);
+    gesture->setPoints(data->pos[0].x, data->pos[0].y,
+                       data->pos[1].x, data->pos[1].y);
+
+
+    return gesture;
 }
 
 GestureObject* twoDragGestureDataToObject(Gesture_Event_Data* event)
@@ -860,20 +1002,66 @@ GestureObject* twoDragGestureDataToObject(Gesture_Event_Data* event)
     return gesture;
 }
 
-GestureObject* longPressGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* longPressGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+    LongPressGesture* gesture = new LongPressGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+
+    wl_longPress_gesture_data* data = reinterpret_cast<wl_longPress_gesture_data*>(event->data);
+
+    gesture->setPoint(data->pos.x, data->pos.y);
+    // todo
+//    struct timeval timeCur;
+//    gettimeofday(&timeCur, NULL);
+//    struct timeval pressTime = gesture->getPressTime();
+//    data->pressTime = (timeCur.tv_sec * 1000 + timeCur.tv_usec / 1000) - (pressTime.tv_sec * 1000 + pressTime.tv_usec / 1000);
+    gesture->setActionInterval(data->actionInterval);
+
+    return gesture;
 }
 
-GestureObject* twoLongPressGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* twoLongPressGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+    TwoLongPressGesture* gesture = new TwoLongPressGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+
+    wl_2longpress_gesture_data* data = reinterpret_cast<wl_2longpress_gesture_data*>(event->data);
+
+    gesture->setPoint(0, data->pos[0].x, data->pos[0].y);
+    gesture->setPoint(1, data->pos[1].x, data->pos[1].y);
+
+    // todo
+//    struct timeval timeCur;
+//    gettimeofday(&timeCur, NULL);
+//    struct timeval pressTime = gesture->getPressTime();
+//    data->pressTime = (timeCur.tv_sec * 1000 + timeCur.tv_usec / 1000) - (pressTime.tv_sec * 1000 + pressTime.tv_usec / 1000);
+    gesture->setActionInterval(data->actionInterval);
+
+    return gesture;
 }
 
 
-GestureObject* twoTapGestureDataToObject(Gesture_Event_Data* data)
+GestureObject* twoTapGestureDataToObject(Gesture_Event_Data* event)
 {
-    return 0;
+    if (!event) {
+        return 0;
+    }
+    TwoDragGesture* gesture = new TwoDragGesture();
+    gesture->setState((GESTURE_STATE)event->state);
+
+    wl_2tap_gesture_data* data = reinterpret_cast<wl_2tap_gesture_data*>(event->data);
+
+    gesture->setCenter(data->center.x, data->center.y);
+    gesture->setOffset(data->offset.x, data->offset.y);
+    gesture->setStartCenter(data->startPos.x, data->startPos.y);
+
+    return gesture;
 }
 
 
@@ -894,53 +1082,53 @@ GestureObject* GestureCommonFun::gestureToObject(Gesture_Event_Data* data)
         switch(data->gtype) {
             case WL_SYSTEM_GESTURE_TYPE_FLICK:
                 return threeFlickGestureDataToObject(data);
-//            case WL_SYSTEM_GESTURE_TYPE_SCRATCH:
-//                return scratchGestureDataToObject(data);
-//            case WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS:
-//                return multiLongPressGestureDataToObject(data);
+            case WL_SYSTEM_GESTURE_TYPE_SCRATCH:
+                return scratchGestureDataToObject(data);
+            case WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS:
+                return multiLongPressGestureDataToObject(data);
 
 //            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_FLICK, GESTURE_TYPE_3FLICK)
-            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_SCRATCH, GESTURE_TYPE_SCRATCH)
-            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS, GESTURE_TYPE_MULTILONGPRESS)
+//            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_SCRATCH, GESTURE_TYPE_SCRATCH)
+//            GESTURE_INFO(WL_SYSTEM_GESTURE_TYPE_MULTILONGPRESS, GESTURE_TYPE_MULTILONGPRESS)
             default:
                 return 0;
         }
     }
     else {
         switch(data->gtype) {
-//            case WL_COMMON_GESTURE_TYPE_TAP:
-//                return tapGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_DRAG:
-//                return dragGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_FLICK:
-//                return flickGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_TAP:
+                return tapGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_DRAG:
+                return dragGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_FLICK:
+                return flickGestureDataToObject(data);
             case WL_COMMON_GESTURE_TYPE_PINCH:
                 return pinchGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
-//                return doubleClickGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_2FLICK:
-//                return twoFlickGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_2ROTARY:
-//                return rotateGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_DOUBLECLICK:
+                return doubleClickGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_2FLICK:
+                return twoFlickGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_2ROTARY:
+                return rotateGestureDataToObject(data);
            case WL_COMMON_GESTURE_TYPE_2DRAG:
                return twoDragGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_LONGPRESS:
-//                return longPressGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_2LONGPRESS:
-//                return twoLongPressGestureDataToObject(data);
-//            case WL_COMMON_GESTURE_TYPE_2TAP:
-//                return twoTapGestureDataToObject(data);
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_TAP, GESTURE_TYPE_TAP)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DRAG, GESTURE_TYPE_DRAG)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_FLICK, GESTURE_TYPE_FLICK)
+            case WL_COMMON_GESTURE_TYPE_LONGPRESS:
+                return longPressGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_2LONGPRESS:
+                return twoLongPressGestureDataToObject(data);
+            case WL_COMMON_GESTURE_TYPE_2TAP:
+                return twoTapGestureDataToObject(data);
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_TAP, GESTURE_TYPE_TAP)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DRAG, GESTURE_TYPE_DRAG)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_FLICK, GESTURE_TYPE_FLICK)
 //            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_PINCH, GESTURE_TYPE_PINCH)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DOUBLECLICK, GESTURE_TYPE_DOUBLECLICK)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2FLICK, GESTURE_TYPE_2FLICK)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2ROTARY, GESTURE_TYPE_2ROTARY)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_DOUBLECLICK, GESTURE_TYPE_DOUBLECLICK)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2FLICK, GESTURE_TYPE_2FLICK)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2ROTARY, GESTURE_TYPE_2ROTARY)
 //            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2DRAG, GESTURE_TYPE_2DRAG)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_LONGPRESS, GESTURE_TYPE_LONGPRESS)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2LONGPRESS, GESTURE_TYPE_2LONGPRESS)
-            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2TAP, GESTURE_TYPE_2TAP)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_LONGPRESS, GESTURE_TYPE_LONGPRESS)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2LONGPRESS, GESTURE_TYPE_2LONGPRESS)
+//            GESTURE_INFO(WL_COMMON_GESTURE_TYPE_2TAP, GESTURE_TYPE_2TAP)
             default:
                 return 0;
         };

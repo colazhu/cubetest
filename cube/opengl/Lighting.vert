@@ -16,9 +16,10 @@ uniform bool u_light_compute_distance_attenuation[maxLightNum]; \n\
 uniform vec3 u_light_attenuation_factors[maxLightNum];  \n\
 uniform float u_light_spot_exponent[maxLightNum];	\n\
 uniform float u_light_spot_cutoff_angle[maxLightNum];   \n\
-vec4 doLighting(in vec4 vPosition, in vec3 vNormal, in vec3 vEye) {             \n\
+vec4 doLighting(in vec4 vPosition, in vec3 vNormal, in vec3 vEye, out vec4 vSpecular) {             \n\
         const float c_zero = 0.0;                                               \n\
         const float c_one = 1.0;                                                \n\
+        vSpecular = vec4(c_zero, c_zero, c_zero, c_zero);                       \n\
 	vec4 color = u_material_emssion + u_material_ambient*u_globalAmbient;	\n\
         for(int i=0; i< maxLightNum; ++i){                                      \n\
                 if (!u_light_enable[i])						\n\
@@ -64,7 +65,7 @@ vec4 doLighting(in vec4 vPosition, in vec3 vNormal, in vec3 vEye) {             
                         h_vec = normalize(h_vec);                               \n\
                         ndoth = dot(vNormal, h_vec);				\n\
                         if (ndoth > 0.0) {					\n\
-                            computed_color += pow(ndoth, u_material_specular_exponent)* u_material_specular * u_light_specular[i];	\n\
+                            vSpecular += pow(ndoth, u_material_specular_exponent)* u_material_specular * u_light_specular[i];	\n\
                         }                                                       \n\
                 }                                                               \n\
                 computed_color *= att_factor;                                   \n\
