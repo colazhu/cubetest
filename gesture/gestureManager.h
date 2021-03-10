@@ -26,6 +26,7 @@ public:
     uint32_t getCommonMask();
     void onSurfaceDestroy(void *surface);
     bool isMultiTouching();
+    bool isPrimary(int id);
     void processTouchEvent(int eventAction,
                            void *data,
                            int id, int x, int y, long long when = 0);

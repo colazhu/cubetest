@@ -167,5 +167,4 @@ struct TouchEvent : public Event
     int x;
     int y;
 };
-
 #endif // NODEDEF_H

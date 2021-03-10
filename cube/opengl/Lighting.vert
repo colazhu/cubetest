@@ -6,72 +6,72 @@ uniform vec4 u_material_ambient;			\n\
 uniform vec4 u_material_diffuse;			\n\
 uniform vec4 u_material_specular;			\n\
 uniform float u_material_specular_exponent;	        \n\
-uniform bool u_light_enable[maxLightNum];			\n\
-uniform vec4 u_light_position[maxLightNum];			\n\
-uniform vec4 u_light_ambient[maxLightNum];			\n\
-uniform vec4 u_light_diffuse[maxLightNum];			\n\
-uniform vec4 u_light_specular[maxLightNum];			\n\
+uniform bool u_light_enable[maxLightNum];               \n\
+uniform vec4 u_light_position[maxLightNum];             \n\
+uniform vec4 u_light_ambient[maxLightNum];              \n\
+uniform vec4 u_light_diffuse[maxLightNum];              \n\
+uniform vec4 u_light_specular[maxLightNum];             \n\
 uniform vec3 u_light_direction[maxLightNum];		\n\
 uniform bool u_light_compute_distance_attenuation[maxLightNum]; \n\
-uniform vec3 u_light_attenuation_factors[maxLightNum];\n\
+uniform vec3 u_light_attenuation_factors[maxLightNum];  \n\
 uniform float u_light_spot_exponent[maxLightNum];	\n\
-uniform float u_light_spot_cutoff_angle[maxLightNum];\n\
-vec4 doLighting(in vec4 vPosition, in vec3 vNormal, in vec3 vEye) {			\n\
-	const float c_zero = 0.0;												\n\
-	const float c_one = 1.0;												\n\
+uniform float u_light_spot_cutoff_angle[maxLightNum];   \n\
+vec4 doLighting(in vec4 vPosition, in vec3 vNormal, in vec3 vEye) {             \n\
+        const float c_zero = 0.0;                                               \n\
+        const float c_one = 1.0;                                                \n\
 	vec4 color = u_material_emssion + u_material_ambient*u_globalAmbient;	\n\
-	for(int i=0; i< maxLightNum; ++i){										\n\
-		if (!u_light_enable[i])												\n\
-			continue;														\n\
-		vec4 computed_color = vec4(c_zero, c_zero, c_zero, c_zero);			\n\
-		vec3 h_vec;															\n\
-		float ndotl, ndoth;													\n\
-		float att_factor;													\n\
-		att_factor = c_one;													\n\
-		vec3 VPpli;															\n\
-                if(u_light_position[i].w > 0.1)	{								\n\
-			float spot_factor;												\n\
-			vec3 att_dist;													\n\
-			VPpli = u_light_position[i].xyz - vPosition.xyz;				\n\
-			if(u_light_compute_distance_attenuation[i])						\n\
-			{																\n\
-				att_dist.x = 1.0;											\n\
-				att_dist.z = dot(VPpli, VPpli);								\n\
-				att_dist.y = sqrt(att_dist.z);								\n\
-				att_factor = 1.0 / dot(att_dist,u_light_attenuation_factors[i]);\n\
-			}																	\n\
-			VPpli = normalize(VPpli);											\n\
-			if(u_light_spot_cutoff_angle[i] < 180.0) {							\n\
-				spot_factor = dot(-VPpli, u_light_direction[i]);				\n\
-				if(spot_factor >= cos(radians(u_light_spot_cutoff_angle[i]))){	\n\
-                                        spot_factor = pow(spot_factor, u_light_spot_exponent[i]);	\n\
-				}else{															\n\
-					spot_factor = 0.0;											\n\
-				}																\n\
-										  										\n\
-				att_factor *= spot_factor;										\n\
-			} 																	\n\
-		}																		\n\
-		else {																	\n\
-                    VPpli = -u_light_direction[i].xyz;									\n\
-		}																		\n\
-		if(att_factor > c_zero)	{												\n\
+        for(int i=0; i< maxLightNum; ++i){                                      \n\
+                if (!u_light_enable[i])						\n\
+                        continue;						\n\
+                vec4 computed_color = vec4(c_zero, c_zero, c_zero, c_zero);     \n\
+                vec3 h_vec;                                                     \n\
+                float ndotl, ndoth;                                             \n\
+                float att_factor;                                               \n\
+                att_factor = c_one;                                             \n\
+                vec3 VPpli;                                                     \n\
+                if(u_light_position[i].w > 0.1)	{                               \n\
+                        float spot_factor;                                      \n\
+                        vec3 att_dist;                                          \n\
+                        VPpli = u_light_position[i].xyz - vPosition.xyz;        \n\
+                        if(u_light_compute_distance_attenuation[i])             \n\
+                        {                                                       \n\
+                                att_dist.x = 1.0;				\n\
+                                att_dist.z = dot(VPpli, VPpli);                 \n\
+                                att_dist.y = sqrt(att_dist.z);			\n\
+                                att_factor = 1.0 / dot(att_dist,u_light_attenuation_factors[i]);    \n\
+                        }							\n\
+                        VPpli = normalize(VPpli);				\n\
+                        if(u_light_spot_cutoff_angle[i] < 180.0) {              \n\
+                                spot_factor = dot(-VPpli, u_light_direction[i]);\n\
+                                if(spot_factor >= cos(radians(u_light_spot_cutoff_angle[i]))){      \n\
+                                        spot_factor = pow(spot_factor, u_light_spot_exponent[i]);   \n\
+                                }else{                                          \n\
+                                        spot_factor = 0.0;			\n\
+                                }						\n\
+                                                                                \n\
+                                att_factor *= spot_factor;			\n\
+                        } 							\n\
+                }								\n\
+                else {								\n\
+                    VPpli = -u_light_direction[i].xyz;				\n\
+                }								\n\
+                if(att_factor > c_zero)	{					\n\
 			computed_color += (u_light_ambient[i] * u_material_ambient);		\n\
-			ndotl = max(c_zero, dot(vNormal, VPpli));							\n\
-			computed_color += (ndotl * u_light_diffuse[i] * u_material_diffuse);\n\
-			vec3 e_vec = normalize(vEye - vPosition.xyz);						\n\
-			h_vec = (VPpli + e_vec);											\n\
-			h_vec = normalize(h_vec);											\n\
-                        ndoth = dot(vNormal, h_vec);											\n\
-			if (ndoth > 0.0) {													\n\
+                        ndotl = max(c_zero, dot(vNormal, VPpli));				\n\
+                        computed_color += (ndotl * u_light_diffuse[i] * u_material_diffuse);    \n\
+                        vec3 e_vec = normalize(vEye - vPosition.xyz);                           \n\
+                        h_vec = (VPpli + e_vec);                                \n\
+                        h_vec = normalize(h_vec);                               \n\
+                        ndoth = dot(vNormal, h_vec);				\n\
+                        if (ndoth > 0.0) {					\n\
                             computed_color += pow(ndoth, u_material_specular_exponent)* u_material_specular * u_light_specular[i];	\n\
-			}																	\n\
-		}																		\n\
-		computed_color *= att_factor;											\n\
-		color += computed_color;												\n\
-	}																			\n\
-        color.a = 1.0;												\n\
-	return color;																\n\
+                        }                                                       \n\
+                }                                                               \n\
+                computed_color *= att_factor;                                   \n\
+                color += computed_color;                                        \n\
+        }                                                                       \n\
+        color.a = 1.0;                                                          \n\
+        return color;                                                           \n\
 }");	
 
 

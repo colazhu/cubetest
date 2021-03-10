@@ -38,8 +38,8 @@ public:
     int popEvent();
 protected:    
     void disableInTime(float ms);
-    void gyroCube(int mode, bool forward, float ms);
     void zoomCamera(float from, float to, float ms);
+    void gyroCube(int mode, bool forward, float ms);
     Arcball* m_arcball;
     int m_gyroMode;
     bool m_enable;

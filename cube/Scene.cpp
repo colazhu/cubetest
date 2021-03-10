@@ -17,6 +17,8 @@
 #define CHILD_CUBE "Cube"
 #define CHILD_PLANE "CubePlane"
 #define LIGHTCOLOR Color4F(1.0, 1.0, 1.0, 1.0)
+#define CAMERA_Z_MAX (20.0f)
+#define CAMERA_Z_MIN (11.0f)
 
 class CameraZTransition : public IntervalAction
 {
@@ -68,7 +70,7 @@ void Scene::init()
 
     RectNode* background = new RectNode("background", this);
     background->initGeometryBuffer();
-    background->setRatio(16.0/9.0);
+    background->setRatio(16.0/10.0);
     background->setTexture(100); // background textureid
     
     LightCache& lightcache = Director::instance()->lightCache();
@@ -224,19 +226,19 @@ void Scene::onGesture(const GestureObject& ev_const)
     case GETSTURE_NAME: { LOG_BASE("%s state[%d]", #GETSTURE_NAME, ev.getState()); break; }
     
     switch(ev.getType()) {
-//        case GESTURE_TYPE_3FLICK:
-//        {
-//            LOG_BASE("GESTURE_TYPE_3FLICK state[%d]", ev.getState());
-//            ThreeFlickGesture& threeflick = static_cast<ThreeFlickGesture&>(ev);
-//            if (ev.getState() == GESTURE_STATE_UPDATED) {
-//                 GesturePoint& point = threeflick.getOffset();
-//                 LOG_BASE("threeflick offset:x:%d y:%d", point.x, point.y);
-//                 if (MATH_ABS(point.x) > MATH_ABS(point.y)*2) {
-//                     m_eventId = point.x > 0 ? CUBE_EVENT_3FLICK_RIGHT : CUBE_EVENT_3FLICK_LEFT;
-//                 }
-//            }
-//        }
-//            break;
+        case GESTURE_TYPE_3FLICK:
+        {
+            LOG_BASE("GESTURE_TYPE_3FLICK state[%d]", ev.getState());
+            ThreeFlickGesture& threeflick = static_cast<ThreeFlickGesture&>(ev);
+            if (ev.getState() == GESTURE_STATE_UPDATED) {
+                 GesturePoint& point = threeflick.getOffset();
+                 LOG_BASE("threeflick offset:x:%d y:%d", point.x, point.y);
+                 if (MATH_ABS(point.x) > MATH_ABS(point.y)*2) {
+                     m_eventId = point.x > 0 ? CUBE_EVENT_3FLICK_RIGHT : CUBE_EVENT_3FLICK_LEFT;
+                 }
+            }
+        }
+            break;
         case GESTURE_TYPE_DOUBLECLICK:
         {
             LOG_BASE("GESTURE_TYPE_DOUBLECLICK");
@@ -273,12 +275,26 @@ void Scene::onGesture(const GestureObject& ev_const)
             PinchGesture& pinch = static_cast<PinchGesture&>(ev);
             LOG_BASE("pinch scale:%.2f, last:%.2f, total:%.2f", pinch.getScaleFactor(), pinch.getLastScaleFactor(), pinch.getTotalScaleFactor());
             if (GESTURE_STATE_FINISHED == ev.getState()) {
-                Camera* camera = Director::instance()->currentCamera();
-                float deltaZ = (pinch.getScaleFactor() - 1.0f) * 10;
-                float cameraZ = MATH_MIN(camera->eye().z - deltaZ, 20.0f);
-                cameraZ = MATH_MAX(cameraZ, 11.0f);
-                zoomCamera(camera->eye().z, cameraZ, 500);
-            }
+                if (m_isCubeMode) {
+                    Camera* camera = Director::instance()->currentCamera();
+                    if (camera->eye().z < CAMERA_Z_MIN + 0.5f && pinch.getTotalScaleFactor() > 1.0f) {
+                        gyroCube(GYROMODE_TWO, m_isCubeMode, 2000);
+                        m_isCubeMode = !m_isCubeMode;
+                    }
+                    else {                     
+                        float deltaZ = (pinch.getTotalScaleFactor() - 1.0f) * 10;
+                        float cameraZ = MATH_MIN(camera->eye().z - deltaZ, CAMERA_Z_MAX);
+                        cameraZ = MATH_MAX(cameraZ, CAMERA_Z_MIN);                    
+                        zoomCamera(camera->eye().z, cameraZ, 200);
+                    }                    
+                }
+                else {
+                    if (pinch.getTotalScaleFactor() < 1.0f) {
+                        gyroCube(GYROMODE_TWO, m_isCubeMode, 2000);
+                        m_isCubeMode = !m_isCubeMode;
+                    }
+                }
+            }    
         }
         break;
         case GESTURE_TYPE_2DRAG:
@@ -296,7 +312,7 @@ void Scene::onGesture(const GestureObject& ev_const)
         }
         break;
         PRINT_GESTRUE(GESTURE_TYPE_SCRATCH)
-        PRINT_GESTRUE(GESTURE_TYPE_3FLICK)
+//        PRINT_GESTRUE(GESTURE_TYPE_3FLICK)
         PRINT_GESTRUE(GESTURE_TYPE_MULTILONGPRESS)
         PRINT_GESTRUE(GESTURE_TYPE_TAP)
         PRINT_GESTRUE(GESTURE_TYPE_DRAG)
@@ -357,6 +373,15 @@ int Scene::longclickScene()
     return txtid;
 }
 
+void Scene::zoomCamera(float from, float to, float ms)
+{
+    CameraZTransition* action = new CameraZTransition(this, from, to);
+    action->initTimeline(ms, true);
+    runAction(action);
+    disableInTime(ms);
+}
+
+
 void Scene::flickCube(bool run)
 {
     if (!m_arcball) {
@@ -388,14 +413,6 @@ void Scene::flickCube(bool run)
         m_flickSpeed = 0;
         m_flickAxis = Vector3::ZERO;
     }
-}
-
-void Scene::zoomCamera(float from, float to, float ms)
-{
-    CameraZTransition* action = new CameraZTransition(this, from, to);
-    action->initTimeline(ms, true);
-    runAction(action);
-    disableInTime(ms);
 }
 
 void Scene::gyroCube(int mode, bool forward, float ms)
@@ -455,6 +472,9 @@ int Scene::popSelectedTexture()
 {
     int ret = m_txtIdSelected;
     m_txtIdSelected = -1;
+    if (-1 != ret) {
+        LOG_BASE("popSelectedTexture:%d", ret);
+    }
     return ret;
 }
 
@@ -476,3 +496,4 @@ void Scene::onTimeOut(int id)
     UNUSED(id)
     m_enable = true;
 }
+

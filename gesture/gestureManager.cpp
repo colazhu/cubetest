@@ -326,6 +326,15 @@ bool GestureManager::isMultiTouching()
     }
     return validPoints > 1;
 }
+bool GestureManager::isPrimary(int id)
+{  
+    for (int i = 0; i < WL_GESTURE_MAX_POINTS; ++i) {
+        if (m_points[i].id == id) {
+            return m_points[i].isPrimary;
+        }
+    }
+    return false;
+}
 
 int GestureManager::processSingleTouchDown(int id, int x, int y)
 {

@@ -210,8 +210,7 @@ void JNICALL Java_com_example_cube_OpenGLJniLib_setTouchRegion
 void Java_com_example_cube_OpenGLJniLib_injectTouch
   (JNIEnv *env, jclass cls, jint id, jint action, jfloat x, jfloat y)
 {
-    LOGJNI("injectTouch id:%d action:%d x:%.1f y:%.1f", id, action, x, y);
-
+    // LOGJNI("injectTouch id:%d action:%d x:%.1f y:%.1f", id, action, x, y);
     TouchEvent event;
     event.action = action;
     event.id = id;
@@ -294,7 +293,7 @@ jint JNICALL Java_com_example_cube_OpenGLJniLib_getEvent
   (JNIEnv *env, jclass cls)
 {    
     int event = Director::instance()->popEvent();
-    LOGJNI("getEvent:%d", event);
+    // LOGJNI("getEvent:%d", event);
     return event;
 }
 

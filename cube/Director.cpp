@@ -331,10 +331,15 @@ void Director::injectTouch(const TouchEvent& event)
     default:
         return;
     }
-    GestureManager::instance()->processTouchEvent(motionEvent, 0, event.id, event.x, event.y);
+    if (event.id >= 0) {
+        GestureManager::instance()->processTouchEvent(motionEvent, 0, event.id, event.x, event.y);
+        if (GestureManager::instance()->isPrimary(event.id)
+            && !GestureManager::instance()->isMultiTouching()) {
+            currentScene()->onTouch((TouchAction)event.action, event.x, event.y);
+        }
+    }
+    else {
 
-    if (currentScene() && m_data->touchRegion.containsPoint(event.x, event.y)) {
-        currentScene()->onTouch((TouchAction)event.action, event.x, event.y);
     }
 }
 
@@ -355,6 +360,7 @@ void Director::setWindowSize(int width, int height)
     if (currentScene()) {
         currentScene()->updateArcball();
     }
+    GLHook::glViewport(0, 0, width, height);
 }
 
 Rect Director::getWindowSize()
