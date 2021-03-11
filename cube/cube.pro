@@ -107,4 +107,5 @@ DISTFILES += \
     opengl/PositionTexture.frag \
     opengl/PositionTexture.vert \
     opengl/PositionTextureNoMVP.frag \
-    opengl/PositionTextureNoMVP.vert
+    opengl/PositionTextureNoMVP.vert \
+    opengl/TestMirrorShader.vert

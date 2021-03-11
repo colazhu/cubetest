@@ -4,6 +4,7 @@
 
 //
 #include "TestShader.vert"
+#include "TestMirrorShader.vert"
 #include "TestShader.frag"
 
 ////

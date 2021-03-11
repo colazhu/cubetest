@@ -42,7 +42,7 @@ Cube::Cube(const std::string& name, int stepsPerPlane, Node* parent):
     Vector4 color(1.0, 1.0, 1.0, 1.0);
     m_material.setAmbient(color * 1.0);
     m_material.setDiffuse(color * 1.0);
-    m_material.setSpecular(color * 1.0, 4.0);
+    m_material.setSpecular(color * 1.0, 40.0);
     // m_material.setEmssion(color);
 }
 
@@ -330,6 +330,7 @@ void Cube::onDraw()
     }
     else {
         drawCube();
+        // drawCubeMirror();
         // drawIntersection();
     }
 }
@@ -417,6 +418,35 @@ void Cube::drawCube()
     p->use();
     p->setUniformsForBuiltins();
 
+    GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
+
+    ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position)
+    ENABLE_ATTR_NORMAL(V3F_N3F_T2F_C4F, Vector3, normal)
+    ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords)
+    ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors)
+
+    for (int i = 0; i < PLANE_NUM; ++i) {
+        if (Texture* txt = Director::instance()->textureCache().getTexture(m_planeInfos[i].textureId)) {
+            txt->bind(true);
+        }
+        GLHook::glDrawArrays(GL_TRIANGLES, i * m_verticesPerPlane, m_verticesPerPlane);
+    }
+
+    GLHook::glBindBuffer(GL_ARRAY_BUFFER, 0);
+    CHECK_GL_ERROR_DEBUG();
+}
+
+void Cube::drawCubeMirror()
+{
+    Program* p = Director::instance()->programCache().getProgram(TESTMIRRORSHADER);
+    if (!p) {
+        return;
+    }
+    p->use();
+    p->setUniformsForBuiltins();
+    if (Uniform* uniform = p->getUniform("u_y")) {
+        p->setUniformLocationWith1f(uniform->location, -6);
+    }
     GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
 
     ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position)

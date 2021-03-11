@@ -6,6 +6,7 @@ class Program;
 
 extern const char* POSITIONSHADER;
 extern const char* TESTSHADER;
+extern const char* TESTMIRRORSHADER;
 extern const char* GRIDSHADER;
 extern const char* PARTICLESHADER;
 extern const char* POSITIONCOLORSHADER;

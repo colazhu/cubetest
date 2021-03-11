@@ -3,9 +3,14 @@
 
 RectNode::RectNode(const std::string& name, Node* parent):
 Node(name, parent),
+m_useMvp(true),
 m_txtid(0),
 m_ratio(1.0)
 {
+    Vector4 color(1.0, 1.0, 1.0, 1.0);
+    m_material.setAmbient(color * 1.0);
+    m_material.setDiffuse(color * 1.0);
+    m_material.setSpecular(color * 1.0, 50.0);
 }
 
 RectNode::~RectNode()
@@ -34,7 +39,7 @@ void RectNode::onInitGeometryBuffer()
 
     for (int i = 0; i < 6; ++i) {
         m_vertices[i].normal.set(0, 0, 1);
-        m_vertices[i].colors = Color4F::BLUE;
+        m_vertices[i].colors = Color4F::WHITE;
         m_vertices[i].position -= Vector3(ratio, 1, 0);
     }
 
@@ -45,29 +50,55 @@ void RectNode::onInitGeometryBuffer()
 
 void RectNode::onDraw()
 {
-    GLHook::glDisable(GL_DEPTH_TEST);
-    Program* p = Director::instance()->programCache().getProgram(POSITIONTEXTURENOMVPSHADER);
-    if (!p) {
-        return;
+    if (m_useMvp) {
+        Program* p = Director::instance()->programCache().getProgram(TESTSHADER);
+        // Program* p = Director::instance()->programCache().getProgram(POSITIONTEXTURESHADER);
+        if (!p) {
+            return;
+        }
+        p->use();
+        p->setUniformsForBuiltins();
+        // p->setUniformTime(1.0);
+        if (Texture* txt = Director::instance()->textureCache().getTexture(m_txtid)) {
+            txt->bind();
+        }
+
+        GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
+        // GLHook::glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices[0]) * 6, m_vertices, GL_STATIC_DRAW);
+        ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position);
+        ENABLE_ATTR_NORMAL(V3F_N3F_T2F_C4F, Vector3, normal);
+        ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords);
+        ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors);
+        GLHook::glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        GLHook::glBindBuffer(GL_ARRAY_BUFFER, 0);
+        CHECK_GL_ERROR_DEBUG();
     }
-    p->use();
-    p->setUniformsForBuiltins();
+    else {
+        GLHook::glDisable(GL_DEPTH_TEST);
+        Program* p = Director::instance()->programCache().getProgram(POSITIONTEXTURENOMVPSHADER);
+        if (!p) {
+            return;
+        }
+        p->use();
+        p->setUniformsForBuiltins();
 
-    if (Texture* txt = Director::instance()->textureCache().getTexture(m_txtid)) {
-        txt->bind();
+        if (Texture* txt = Director::instance()->textureCache().getTexture(m_txtid)) {
+            txt->bind();
+        }
+
+        GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
+        // GLHook::glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices[0]) * 6, m_vertices, GL_STATIC_DRAW);
+        ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position);
+    //    ENABLE_ATTR_NORMAL(V3F_N3F_T2F_C4F, Vector3, normal);
+        ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords);
+    //    ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors);
+        GLHook::glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        GLHook::glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GLHook::glEnable(GL_DEPTH_TEST);
+        CHECK_GL_ERROR_DEBUG();
     }
-
-    GLHook::glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
-    // GLHook::glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices[0]) * 6, m_vertices, GL_STATIC_DRAW);
-    ENABLE_ATTR_POSITION(V3F_N3F_T2F_C4F, Vector3, position);
-//    ENABLE_ATTR_NORMAL(V3F_N3F_T2F_C4F, Vector3, normal);
-    ENABLE_ATTR_TEX_COORD(V3F_N3F_T2F_C4F, Tex2F, texCoords);
-//    ENABLE_ATTR_COLOR(V3F_N3F_T2F_C4F, Color4F, colors);
-    GLHook::glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    GLHook::glBindBuffer(GL_ARRAY_BUFFER, 0);
-    GLHook::glEnable(GL_DEPTH_TEST);
-    CHECK_GL_ERROR_DEBUG();
 
 }
 
@@ -79,4 +110,9 @@ void RectNode::setTexture(int txtid)
 void RectNode::setRatio(float ratio)
 {
     m_ratio = ratio;
+}
+
+void RectNode::useMVP(bool use)
+{
+    m_useMvp = use;
 }

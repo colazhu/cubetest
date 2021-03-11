@@ -16,7 +16,8 @@
 #define CUBE_SCALE 6.0f
 #define CHILD_CUBE "Cube"
 #define CHILD_PLANE "CubePlane"
-#define AMBIENTCOLOR Color4F(0.5, 0.5, 0.5, 1.0)
+// #define AMBIENTCOLOR Color4F(0.5, 0.5, 0.5, 1.0)
+#define AMBIENTCOLOR Color4F::WHITE
 #define LIGHTCOLOR Color4F(1.0, 1.0, 1.0, 1.0)
 
 #define AMBIENTCOLOR_TEST Color4F(1.0, 1.0, 1.0, 1.0)
@@ -76,9 +77,17 @@ void Scene::init()
     Director* director = Director::instance();
     RectNode* background = new RectNode("background", this);
     Rect winrect = director->getWindowSize();
-    background->initGeometryBuffer();
     background->setRatio(winrect.size.width/winrect.size.height);
+    background->useMVP(false);
+    background->initGeometryBuffer();
     background->setTexture(100); // background textureid
+
+//    RectNode* terrain = new RectNode("terrain", this);
+//    terrain->initGeometryBuffer();
+//    terrain->setTexture(101);
+//    terrain->setScale(6);
+//    terrain->setRotationX(90);
+//    terrain->setPositionY(-6);
     
     LightCache& lightcache = director->lightCache();
     lightcache.setGlobalAmbientColor(AMBIENTCOLOR);

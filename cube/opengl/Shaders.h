@@ -4,6 +4,7 @@
 //
 extern const char* TESTSHADER_FRAG;
 extern const char* TESTSHADER_VERT;
+extern const char* TESTMIRRORSHADER_VERT;
 
 ////
 //extern const char* POSITIONCOLORSIZE_FRAG;

@@ -12,6 +12,8 @@ public:
     virtual void onDraw();
     void setTexture(int txtid);
     void setRatio(float ratio);
+    void useMVP(bool use = false);
+
 protected:
 	RectNode();
 
@@ -26,5 +28,6 @@ protected:
 
     int m_txtid;
     float m_ratio;
+    bool m_useMvp;
 };
 #endif

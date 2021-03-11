@@ -27,6 +27,7 @@ public:
 
 protected:
     void drawCube();
+    void drawCubeMirror();
     void drawIntersection();
     void drawDummy();
     bool getIntersectPlaneVector(Vector3& normal, Vector3& up);

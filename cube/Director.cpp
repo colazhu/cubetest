@@ -194,6 +194,7 @@ void Director::init()
     textureCache().addImage(17, "vehicle2560.png");
 
     textureCache().addImage(100, "background.png");
+    textureCache().addImage(101, "drag1.png");
 
     setPlaneTexture(0, 0);
     setPlaneTexture(1, 3);
@@ -484,6 +485,7 @@ bool Director::render()
     setDepthTest(true);
     GLHook::glEnable(GL_LINE_SMOOTH);
     GLHook::glEnable(GL_MULTISAMPLE);
+    GLHook::glEnable(GL_SCISSOR_TEST);
 
 
     matrixStack().loadMatrix(MATRIX_STACK_PROJECTION, currentCamera()->projection());
