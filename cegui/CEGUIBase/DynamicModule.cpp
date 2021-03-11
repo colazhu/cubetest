@@ -81,8 +81,8 @@ struct DynamicModule::Impl :
 
 //----------------------------------------------------------------------------//
 // Todo cola
-static const char MODULE_DIR_VAR_NAME[] = "NXUI_ROOT";
-// static const char MODULE_DIR_VAR_NAME[] = "CEGUI_MODULE_DIR";
+// static const char MODULE_DIR_VAR_NAME[] = "NXUI_ROOT";
+static const char MODULE_DIR_VAR_NAME[] = "CEGUI_MODULE_DIR";
 //----------------------------------------------------------------------------//
 #if defined(__WIN32__) || defined(_WIN32) || defined(__CYGWIN__)
     static const String LibraryExtension(".dll");

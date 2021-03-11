@@ -6,7 +6,7 @@
 //#include "gestureManager.h"
 //#include "gestureObject.h"
 //#include "gestureCommonFun.h"
-// #include "CEGuiRender.h"
+#include "CEGuiRender.h"
 #include "Director.h"
 
 enum MOUSE_STATUS {
@@ -41,69 +41,35 @@ struct MouseEvent {
 };
 static MouseEvent s_mouseevent;
 
-//void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)
-//{
-//    if (!list) {
-//        return;
-//    }
-
-//    printf("\n onGestureEvent: eventlist:%p data:%p +++ \n", list, data);
-//    GestureCommonFun::printGestureDataList(list);
-
-//    const Gesture_Event_Data_List* curList = list;
-//    while (curList) {
-//        GestureEvent gestureev;
-//        gestureev.gclass = curList->data->gclass;
-//        gestureev.gtype = curList->data->gtype;
-//        Director::instance()->injectGesture(gestureev);
-//        curList = curList->next;
-//    }
-//    printf("\n onGestureEvent --- \n");
-
-//}
 
 void onMouseEvent(const MouseEvent& event) {
     // printf("\n onMouseEvent: event:%d x:%d, y:%d flg:0x%08x +++ \n", event.event, event.x, event.y, event.status);
 
     TouchAction touchevent;
-//    int motionEvent = 0;
-//    MultiTouchPoint point[10];
-//    point[0].coords.x = event.x;
-//    point[0].coords.y = event.y;
-
     switch (event.event) {
     case MOUSE_DOWN:
         touchevent = TouchAction_Down;
-//        motionEvent = MOTION_EVENT_ACTION_DOWN;
-//        point[0].state = TouchPointPressed;
         break;
     case MOUSE_UP:
         touchevent = TouchAction_Up;
-//        motionEvent = MOTION_EVENT_ACTION_UP;
-//        point[0].state = TouchPointReleased;
         break;
     case MOUSE_MOVE:
         touchevent = TouchAction_Move;
-//        motionEvent = MOTION_EVENT_ACTION_MOVE;
-//        point[0].state = TouchPointMoved;
         break;
     default:
         return;
     }
-//    GestureManager::instance()->processTouchEvent(motionEvent, 0, point, 1, GestureCommonFun::currentTime());
+
     TouchEvent touchev;
-    // touchev.eventtype;
     touchev.id = 0;
     touchev.action = touchevent;
     touchev.x = event.x;
     touchev.y = event.y;
     Director::instance()->injectTouch(touchev);
-
 }
 
 void framebuffsize_callback(GLFWwindow* window, int width, int height) {
     printf("\n framebuffsize_callback:%p  w:%d h:%d +++ \n", window, width, height);
-    glViewport(0, 0, width, height);
     Director::instance()->setWindowSize(width, height);
     printf("\n framebuffsize_callback --- \n");
 }
@@ -264,65 +230,20 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 
-//void loadBmp(int txtid, const char* filepath, int w, int h)
-//{
-//    char* data = NULL;
-//    unsigned long size = w*h*4+54;
-////    unsigned long size = 2560*1440*3+54;
-//    FILE * file = fopen(filepath, "rb");
-//    do {
-//        if (!file) {
-//            break;
-//        }
-//        data = new char[size];
-//        unsigned long readsize = fread(data, 1, size, file);
-//        if (size != readsize) {
-//            break;
-//        }
-////        {
-////             LOG_BASE_DUMP(data, 54);
-////             data[28] = 32;
-////             unsigned long size2 = 2560*1440*4+54;
-////             char* data2 = new char[size2];
-////             memcpy(data2, data, 54);
-////            for (int i = 0; i < (size-54)/3; ++i) {
-////                data2[54 + i*4] = data[54 + i*3];
-////                data2[54 + i*4 + 1] = data[54 + i*3 + 1];
-////                data2[54 + i*4 + 2] = data[54 + i*3 + 2];
-////                data2[54 + i*4 + 3] = 0xff;
-////            }
-////            FILE * fileOut = fopen("/home/colazhu/takoyaki/takoyaki/TestProj/out/TestImage2.bmp", "wb+");
-////            fwrite(data2, 1, size2, fileOut);
-////            fclose(fileOut);
-////        }
-//        Director::instance()->addTexture(txtid, data + 54, 150, 150);
-//    } while (0);
-//    delete [] data;
-//    if (file) {
-//        fclose(file);
-//        file = NULL;
-//    }
-//}
-
 int main(int argc, char** argv)
 {  
-//    GestureManager::instance()->setFoucsSurfaceRegion(new GestureRegion(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT));
-//    GestureManager::instance()->setNotifyFunc(onGestureEvent);
 
     glfwInit();
-//    CEGuiRender render;
+    CEGuiRender render;
 
     do {
         GLFWwindow* window = initGLWindow(TITLE_NAME, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
         if (NULL == window) {
             break;
         }
-//        GestureManager::instance()->enableSystemGesture(WL_SYSTEM_GESTURE_TYPE_FLAG_ALL);
-//        GestureManager::instance()->enableCommonGesture(window, WL_COMMON_GESTURE_TYPE_FLAG_ALL);
 
-        glViewport(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
-//        render.initRender();
-//        render.createRootWindow();
+        // glViewport(0, 0, DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
+        render.initRender();
 
         Director::instance()->init();
         Director::instance()->setWindowSize(DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
@@ -345,13 +266,12 @@ int main(int argc, char** argv)
             glfwSwapBuffers(window);
 
             glfwPollEvents();
-//            GestureManager::instance()->update();
         }
     } while (0);
 
     Director::instance()->deinit();
     Director::destroy();
-//    render.deinitRender();
+    render.deinitRender();
     glfwTerminate();
     return 0;
 

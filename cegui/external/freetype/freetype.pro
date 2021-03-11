@@ -5,7 +5,7 @@ CONFIG -= app_bundle gui core
 
 # DEFINES += XXX_EXPORT
 include(freetype.pri)
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lz
 
 unix {
@@ -18,7 +18,7 @@ else {
 INCLUDEPATH += \
 	./include
 
-# DEPENDPATH += $$(NXUI_ROOT)/external/freetype/include
+# DEPENDPATH += $$(PROJROOT)/cegui/external/freetype/include
 
 
 HEADERS += \

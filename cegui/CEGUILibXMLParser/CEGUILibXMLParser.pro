@@ -4,8 +4,8 @@ CONFIG -= app_bundle gui core
 #CONFIG += c++11
 
 include(CEGUILibXMLParser.pri)
-include($$(NXUI_ROOT)/CEGUI/CEGUIBase/CEGUIBase.pri)
-# include($$(NXUI_ROOT)/external/libxml2/libxml2.pri)
+include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
+# include($$(PROJROOT)/cegui/external/libxml2/libxml2.pri)
 DEFINES += CEGUI_TINYXML_HAS_2_6_API
 
 unix {
@@ -15,7 +15,7 @@ else {
 
 }
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR # -lxml2 -lCEGUIBase
 
 HEADERS += \    

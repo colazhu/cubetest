@@ -3,12 +3,12 @@ TARGET = FreeImage
 CONFIG -= app_bundle gui core
 #CONFIG += staticlib
 
-include($$(NXUI_ROOT)/external/FreeImage/FreeImage.pri)
-include($$(NXUI_ROOT)/external/zlib/zlib.pri)
-include($$(NXUI_ROOT)/external/libpng/libpng.pri)
+include($$(PROJROOT)/cegui/external/FreeImage/FreeImage.pri)
+include($$(PROJROOT)/cegui/external/zlib/zlib.pri)
+include($$(PROJROOT)/cegui/external/libpng/libpng.pri)
 
 # DEFINES += OPJ_STATIC LIBRAW_NODLL NO_LCMS MNG_BUILD_SO FREEIMAGE_EXPORTS
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lz -lpng
 
 unix {

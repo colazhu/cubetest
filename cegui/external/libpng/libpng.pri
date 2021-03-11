@@ -1,6 +1,6 @@
 LIBPNG_PATH = \
-        $$(NXUI_ROOT)/external/libpng/include \
-        $$(NXUI_ROOT)/external/libpng
+        $$(PROJROOT)/cegui/external/libpng/include \
+        $$(PROJROOT)/cegui/external/libpng
 
 INCLUDEPATH += $$LIBPNG_PATH
 DEPENDPATH += $$LIBPNG_PATH

@@ -4,10 +4,10 @@ CONFIG -= app_bundle gui core
 # CONFIG += staticlib
 
 # DEFINES += PNG_ARM_NEON_OPT=0
-include($$(NXUI_ROOT)/external/zlib/zlib.pri)
-include($$(NXUI_ROOT)/external/libpng/libpng.pri)
+include($$(PROJROOT)/cegui/external/zlib/zlib.pri)
+include($$(PROJROOT)/cegui/external/libpng/libpng.pri)
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lz
 
 

@@ -1,5 +1,5 @@
 GLM_PATH = \
-        $$(NXUI_ROOT)/external
+        $$(PROJROOT)/cegui/external
 
 INCLUDEPATH += $$GLM_PATH
 DEPENDPATH += $$GLM_PATH

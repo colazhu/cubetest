@@ -5,14 +5,14 @@ CONFIG -= app_bundle gui core
 
 # DEFINES += XXX_EXPORT
 include(CEGUIBase.pri)
-include($$(NXUI_ROOT)/external/freetype/freetype.pri)
-include($$(NXUI_ROOT)/external/zlib/zlib.pri)
+include($$(PROJROOT)/cegui/external/freetype/freetype.pri)
+include($$(PROJROOT)/cegui/external/zlib/zlib.pri)
 # LIBS += -lXXX -lXXX -lXXX -lXXX
 
 LIBS += -L$$DESTDIR -lz -lfreetype
 LIBS += -ldl -lpcre
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 
 HEADERS += \
     include/CEGUI/Affector.h \

@@ -7,7 +7,7 @@ include(glm.pri)
 
 # DEFINES += XXX_EXPORT
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 
 unix {
 

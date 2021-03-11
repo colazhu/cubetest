@@ -1,5 +1,5 @@
 ZLIB_PATH = \
-        $$(NXUI_ROOT)/external/zlib \
+        $$(PROJROOT)/cegui/external/zlib \
 
 INCLUDEPATH += $$ZLIB_PATH
 DEPENDPATH += $$ZLIB_PATH

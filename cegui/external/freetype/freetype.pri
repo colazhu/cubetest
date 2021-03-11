@@ -1,5 +1,5 @@
 FREETYPE_PATH = \
-        $$(NXUI_ROOT)/external/freetype/include
+        $$(PROJROOT)/cegui/external/freetype/include
 
 INCLUDEPATH += $$FREETYPE_PATH
 DEPENDPATH += $$FREETYPE_PATH

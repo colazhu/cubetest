@@ -3,7 +3,7 @@ TARGET = CEGUICoreWindowRendererSet
 CONFIG -= app_bundle gui core
 #CONFIG += c++11
 
-include($$(NXUI_ROOT)/CEGUI/CEGUIBase/CEGUIBase.pri)
+include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
 # DEFINES += XXX_EXPORT
 
 # LIBS += -lXXX -lXXX -lXXX -lXXX
@@ -15,10 +15,10 @@ else {
 
 }
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 
-INCLUDEPATH += $$(NXUI_ROOT)/CEGUI/CEGUICoreWindowRendererSet/include
-DEPENDPATH += $$(NXUI_ROOT)/CEGUI/CEGUICoreWindowRendererSet/include
+INCLUDEPATH += $$(PROJROOT)/cegui/CEGUICoreWindowRendererSet/include
+DEPENDPATH += $$(PROJROOT)/cegui/CEGUICoreWindowRendererSet/include
 
 
 HEADERS += \    

@@ -5,7 +5,7 @@ CONFIG -= app_bundle gui core
 #DEFINES += ZLIB_DLL
 
 include(zlib.pri)
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 
 unix {
 

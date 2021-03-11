@@ -1,5 +1,5 @@
 CEGUIBASE_PATH = \
-        $$(NXUI_ROOT)/CEGUI/CEGUIBase/include
+        $$(PROJROOT)/cegui/CEGUIBase/include
 
 INCLUDEPATH += $$CEGUIBASE_PATH
 DEPENDPATH += $$CEGUIBASE_PATH

@@ -3,8 +3,8 @@ TARGET = CEGUIOpenGLRenderer
 CONFIG -= app_bundle gui core
 CONFIG += c++11
 
-include($$(NXUI_ROOT)/CEGUI/CEGUIBase/CEGUIBase.pri)
-include($$(NXUI_ROOT)/external/glm/glm.pri)
+include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
+include($$(PROJROOT)/cegui/external/glm/glm.pri)
 # DEFINES += XXX_EXPORT
 
 # LIBS += -lXXX -lXXX -lXXX -lXXX
@@ -16,10 +16,10 @@ else {
 
 }
 
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 
-INCLUDEPATH += $$(NXUI_ROOT)/CEGUI/CEGUIOpenGLRenderer/include
-DEPENDPATH += $$(NXUI_ROOT)/CEGUI/CEGUIOpenGLRenderer/include
+INCLUDEPATH += $$(PROJROOT)/cegui/CEGUIOpenGLRenderer/include
+DEPENDPATH += $$(PROJROOT)/cegui/CEGUIOpenGLRenderer/include
 
 
 HEADERS += \

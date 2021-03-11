@@ -2,11 +2,11 @@ TEMPLATE = lib
 TARGET = CEGUIFreeImageImageCodec
 CONFIG -= app_bundle gui core
 #CONFIG += c++11
-DESTDIR  = $$(NXUI_ROOT)/out
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lFreeImage  -lpng -lz
 
-include($$(NXUI_ROOT)/CEGUI/CEGUIBase/CEGUIBase.pri)
-include($$(NXUI_ROOT)/external/FreeImage/FreeImage.pri)
+include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
+include($$(PROJROOT)/cegui/external/FreeImage/FreeImage.pri)
 
 # DEFINES += FREEIMAGE_LIB
 
@@ -19,10 +19,8 @@ else {
 
 }
 
-
-
-INCLUDEPATH += $$(NXUI_ROOT)/CEGUI/CEGUIFreeImageImageCodec/include
-DEPENDPATH += $$(NXUI_ROOT)/CEGUI/CEGUIFreeImageImageCodec/include
+INCLUDEPATH += $$(PROJROOT)/cegui/CEGUIFreeImageImageCodec/include
+DEPENDPATH += $$(PROJROOT)/cegui/CEGUIFreeImageImageCodec/include
 
 
 HEADERS += \    
