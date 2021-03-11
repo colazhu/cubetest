@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<Imageset version="2" name="SpaceBackground" imagefile="SpaceBackground.jpg" autoScaled="true" nativeHorzRes="4096" nativeVertRes="2303">
-	<Image name="SpaceBackground" xPos="0" yPos="0" width="4096" height="2303" />
-</Imageset>

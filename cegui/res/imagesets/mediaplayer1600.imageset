@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Imageset version="2" name="mediaplayer1600" imagefile="mediaplayer1600.png" nativeHorzRes="1600" nativeVertRes="2560" autoScaled="vertical" >
+    <Image name="mediaplayer1600" xPos="0" yPos="0" width="1600" height="2560" />
+</Imageset>

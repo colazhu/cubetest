@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Imageset version="2" name="ac" imagefile="ac.png" nativeHorzRes="1600" nativeVertRes="1600" autoScaled="vertical" >
+    <Image name="ac" xPos="0" yPos="0" width="1600" height="1600" />
+</Imageset>
