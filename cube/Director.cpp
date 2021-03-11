@@ -18,7 +18,7 @@
 #define CAMERA_DEFAULT "camera_default"
 #define SCENE_DEFAULT "scene_default"
 
-#define CAMERA_EYE Vector3(0, 0, 12)
+#define CAMERA_EYE Vector3(0, 0, 15)
 #define CAMERA_DIR Vector3(0, 0,-1)
 
 void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)
@@ -154,18 +154,8 @@ void Director::init()
     GestureManager::instance()->enableCommonGesture(this, WL_COMMON_GESTURE_TYPE_FLAG_ALL);
 
     GLHook::loadGL();
-    // textureCache().addImage("CubeImage", "ic_launcher.png");
-    // textureCache().addImage("CubeImage1", "BackgroundSampleBrowser.jpg");
-    // textureCache().addImage("CubeImage2", "RestaurantGameSampleGameOver.png");
-    // textureCache().addImage("CubeImage3", "Cube3.bmp");
-    // textureCache().addImage("CubeImage4", "Cube4.png");
-    // textureCache().addImage("CubeImage5", "Cube5.png");
-  
+
     programCache().loadDefaultPrograms();
-
-
-//    lightcache.setGlobalAmbientColor(Color4F::WHITE);
-
 
 
     // init camera
@@ -177,6 +167,41 @@ void Director::init()
     m_data->curscene = new Scene(SCENE_DEFAULT);
     m_data->curscene->init();
     m_data->scenes[SCENE_DEFAULT] = m_data->curscene;
+
+#ifdef USE_CEGUI
+    textureCache().addImage(0, "home.png");
+    textureCache().addImage(1, "home1600.png");
+    textureCache().addImage(2, "home2560.png");
+
+    textureCache().addImage(3, "ac.png");
+    textureCache().addImage(4, "ac1600.png");
+    textureCache().addImage(5, "ac2560.png");;
+
+    textureCache().addImage(6, "mediaplayer.png");
+    textureCache().addImage(7, "mediaplayer1600.png");
+    textureCache().addImage(8, "mediaplayer2560.png");
+
+    textureCache().addImage(9,  "navi.png");
+    textureCache().addImage(10, "navi1600.png");
+    textureCache().addImage(11, "navi2560.png");
+
+    textureCache().addImage(12, "phone.png");
+    textureCache().addImage(13, "phone1600.png");
+    textureCache().addImage(14, "phone2560.png");
+
+    textureCache().addImage(15, "vehicle.png");
+    textureCache().addImage(16, "vehicle1600.png");
+    textureCache().addImage(17, "vehicle2560.png");
+
+    textureCache().addImage(100, "background.png");
+
+    setPlaneTexture(0, 0);
+    setPlaneTexture(1, 3);
+    setPlaneTexture(2, 6);
+    setPlaneTexture(3, 9);
+    setPlaneTexture(4, 12);
+    setPlaneTexture(5, 15);
+#endif
 }
 
 void Director::deinit()

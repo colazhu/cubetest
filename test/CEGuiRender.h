@@ -11,7 +11,7 @@ public:
 
     void initRender(const char* corePath = NULL);
     void deinitRender();
-
+    void loadResource();
     void createRootWindow();
 
     bool loop();

@@ -67,7 +67,7 @@ CubePlane::~CubePlane()
 
 void CubePlane::onDraw()
 {
-#if OS_ANDROID
+#if 1 // OS_ANDROID
     Program* p = Director::instance()->programCache().getProgram(POSITIONTEXTURESHADER);
     if (!p) {
         return;

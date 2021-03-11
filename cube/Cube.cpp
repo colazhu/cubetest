@@ -242,7 +242,7 @@ void Cube::onInitGeometryBuffer()
     // move center to zero
     for (int i = 0; i < m_verticesNum; ++i) {
         m_vertices[i].position -= Vector3(0.5, 0.5, -0.5);
-#if OS_ANDROID
+#if 1 // OS_ANDROID
         m_vertices[i].colors = Color4F::WHITE;
 #endif
     }
@@ -270,35 +270,6 @@ void Cube::onInitGeometryBuffer()
     m_planeInfos[PLANE_DOWN].up.set(0, 0, -1);  // back
     m_planeInfos[PLANE_LEFT].up.set(0, 1, 0);  // up
     m_planeInfos[PLANE_RIGHT].up.set(0, 1, 0); // up
-
-    // set plane textures
-//    m_planeInfos[PLANE_FRONT].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_BACK].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_UP].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_DOWN].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_LEFT].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_RIGHT].texture = Director::instance()->textureCache().getTexture("CubeImage");
-
-//    m_planeInfos[PLANE_FRONT].texture = Director::instance()->textureCache().getTexture("CubeImage");
-//    m_planeInfos[PLANE_BACK].texture = Director::instance()->textureCache().getTexture("CubeImage1");
-//    m_planeInfos[PLANE_UP].texture = Director::instance()->textureCache().getTexture("CubeImage2");
-//    m_planeInfos[PLANE_DOWN].texture = Director::instance()->textureCache().getTexture("CubeImage3");
-//    m_planeInfos[PLANE_LEFT].texture = Director::instance()->textureCache().getTexture("CubeImage4");
-//    m_planeInfos[PLANE_RIGHT].texture = Director::instance()->textureCache().getTexture("CubeImage5");
-
-//    m_planeInfos[PLANE_FRONT].texture = Director::instance()->textureCache().getTexture(0);
-//    m_planeInfos[PLANE_BACK].texture = Director::instance()->textureCache().getTexture(0);
-//    m_planeInfos[PLANE_UP].texture = Director::instance()->textureCache().getTexture(0);
-//    m_planeInfos[PLANE_DOWN].texture = Director::instance()->textureCache().getTexture(0);
-//    m_planeInfos[PLANE_LEFT].texture = Director::instance()->textureCache().getTexture(0);
-//    m_planeInfos[PLANE_RIGHT].texture = Director::instance()->textureCache().getTexture(0);
-
-    // m_planeInfos[PLANE_FRONT].texture = Director::instance()->textureCache().getTexture(11);
-    // m_planeInfos[PLANE_BACK].texture = Director::instance()->textureCache().getTexture(11);
-    // m_planeInfos[PLANE_UP].texture = Director::instance()->textureCache().getTexture(11);
-    // m_planeInfos[PLANE_DOWN].texture = Director::instance()->textureCache().getTexture(11);
-    // m_planeInfos[PLANE_LEFT].texture = Director::instance()->textureCache().getTexture(11);
-    // m_planeInfos[PLANE_RIGHT].texture = Director::instance()->textureCache().getTexture(11);
 
     m_planeInfos[PLANE_FRONT].textureId = -1;
     m_planeInfos[PLANE_BACK].textureId = -1;
@@ -361,8 +332,6 @@ void Cube::onDraw()
         drawCube();
         // drawIntersection();
     }
-
-    // drawDummy();
 }
 
 void Cube::setDummyMode(bool enable)

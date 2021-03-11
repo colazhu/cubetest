@@ -80,6 +80,8 @@ void CEGuiRender::initRender(const char* corePath)
     CEGUI::OpenGL3Renderer::bootstrapSystem();
     initResourceGroupDirectories(corePath);
     initDefaultResourceGroups();
+
+    loadResource();
     createRootWindow();
 }
 
@@ -169,6 +171,34 @@ void CEGuiRender::initDefaultResourceGroups()
     CEGUI::SchemeManager::getSingleton().createFromFile("Generic.scheme");
 }
 
+void CEGuiRender::loadResource()
+{
+//    CEGUI::ImageManager::getSingleton().loadImageset("background.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("home.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("home1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("home2560.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("ac.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("ac1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("ac2560.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("navi.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("navi1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("navi2560.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("mediaplayer.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("mediaplayer1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("mediaplayer2560.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("phone.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("phone1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("phone2560.imageset");
+
+//    CEGUI::ImageManager::getSingleton().loadImageset("vehicle.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("vehicle1600.imageset");
+//    CEGUI::ImageManager::getSingleton().loadImageset("vehicle2560.imageset");
+}
 
 void CEGuiRender::createRootWindow()
 {

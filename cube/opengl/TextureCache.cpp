@@ -3,9 +3,11 @@
 #include "ProgramCache.h"
 #include "Program.h"
 #include "Director.h"
-// #include "CEGUI/ImageManager.h"
-// #include "CEGUI/BasicImage.h"
-// #include "Texture.h"
+#ifdef USE_CEGUI
+#include "CEGUI/ImageManager.h"
+#include "CEGUI/BasicImage.h"
+#include "Texture.h"
+#endif
 
 Texture::Texture(GLuint txtid, int w, int h) :
     ogltxtid(txtid),
@@ -127,15 +129,20 @@ Texture* TextureCache::addImage(const std::string &keyname, void* buffer, int w,
     return addImage(keyname, ogltxtid, w, h);
 }
 
+Texture* TextureCache::addImage(int id, const std::string &path) {
+    return addImage(id2name(id), path);
+}
+
 Texture* TextureCache::addImage(const std::string &keyname, const std::string &path) {
     if (keyname.empty() || m_textures.count(keyname)) {
         return NULL;
     }
-
-//    CEGUI::OpenGLTexture& ogltxt = static_cast<CEGUI::OpenGLTexture&>(CEGUI::ImageManager::getSingleton().addFromTextureFile(keyname.c_str(), path.c_str()));
-//    Texture* txt = new Texture(ogltxt.getOpenGLTexture(), ogltxt.getSize().d_width, ogltxt.getSize().d_height);
-//    m_textures[keyname] = txt;
-//    return txt;
+#ifdef USE_CEGUI
+    CEGUI::OpenGLTexture& ogltxt = static_cast<CEGUI::OpenGLTexture&>(CEGUI::ImageManager::getSingleton().addFromTextureFile(keyname.c_str(), path.c_str()));
+    Texture* txt = new Texture(ogltxt.getOpenGLTexture(), ogltxt.getSize().d_width, ogltxt.getSize().d_height);
+    m_textures[keyname] = txt;
+    return txt;
+#endif
     return NULL;
 }
 

@@ -20,7 +20,7 @@ class TextureCache {
 public:
     TextureCache();
     virtual ~TextureCache();
-
+    Texture* addImage(int id, const std::string &path);
     Texture* addImage(const std::string &keyname, const std::string &path);
     Texture* addImage(int id, void* buffer, int w, int h);
     Texture* addImage(const std::string &keyname, void* buffer, int w, int h);
