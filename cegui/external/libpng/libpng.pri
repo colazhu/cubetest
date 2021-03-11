@@ -1,0 +1,8 @@
+LIBPNG_PATH = \
+        $$(NXUI_ROOT)/external/libpng/include \
+        $$(NXUI_ROOT)/external/libpng
+
+INCLUDEPATH += $$LIBPNG_PATH
+DEPENDPATH += $$LIBPNG_PATH
+
+DEFINES += PNG_iTXt_SUPPORTED # PNG_BENIGN_ERRORS_SUPPORTED # PNG_READ_SUPPORTED

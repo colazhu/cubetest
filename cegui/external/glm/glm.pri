@@ -1,0 +1,6 @@
+GLM_PATH = \
+        $$(NXUI_ROOT)/external
+
+INCLUDEPATH += $$GLM_PATH
+DEPENDPATH += $$GLM_PATH
+
