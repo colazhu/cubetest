@@ -230,8 +230,8 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
     return window;
 }
 
-#define DEFAULT_SIZE_WIDTH (960)
-#define DEFAULT_SIZE_HEIGHT (540)
+#define DEFAULT_SIZE_WIDTH (256*4)
+#define DEFAULT_SIZE_HEIGHT (160*4)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 

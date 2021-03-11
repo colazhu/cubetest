@@ -90,6 +90,10 @@ private:
 
     void drawScene();
 
+    bool isPortait();
+    bool isFullScreen();
+    void updateLayout(bool isPortrait, bool isFullScreen);
+
     static Director* s_instance;
     DirectorPrivate* m_data;
     DISABLE_COPY(Director)

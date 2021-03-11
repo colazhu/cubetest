@@ -355,9 +355,68 @@ void Director::injectGesture(const GestureObject& event)
     }
 }
 
+bool Director::isPortait() {
+    return ((m_data->layout&LAYOUT_PORTRAIT) != 0);
+}
+
+bool Director::isFullScreen() {
+    return ((m_data->layout&LAYOUT_FULL) != 0);
+}
+
+void Director::updateLayout(bool isPortrait, bool isFull)
+{
+    bool curFull = isFullScreen();
+    bool curPortrait = isPortait();
+
+    if (curPortrait == isPortrait && curFull == isFull) {
+        return;
+    }
+    LOG_BASE("isPortrait:%d->%d isFull:%d->%d", curPortrait, isPortrait, curFull, isFull);
+    int layout = 0;
+    if (curPortrait != isPortrait) {
+        curPortrait = isPortrait;
+        if (curPortrait) {
+            rotateCube(90, 1000);
+        }
+        else {
+            rotateCube(-90, 1000);
+
+        }
+    }
+    layout |= curPortrait ? LAYOUT_PORTRAIT : LAYOUT_LANDSCAPE;
+
+    if (curFull != isFull) {
+        curFull = isFull;
+        if (curFull) {
+            // setTouchRegion(0, 0, m_data->winSize.size.width, m_data->winSize.size.height);
+        }
+        else {
+            // setTouchRegion((m_data->winSize.size.width + m_data->winSize.size.height)/2, 0, m_data->winSize.size.height, m_data->winSize.size.height);
+        }
+    }
+    layout |= curFull ? LAYOUT_FULL : LAYOUT_HALF;
+    setLayout(layout);
+}
+
 void Director::injectKey(const KeyEvent& event)
 {
-
+    LOG_BASE("injectKey: keycode:%d action:%d", event.key, event.action);
+    if (event.action == KEYACTION_DOWN) {
+        switch (event.key) {
+            case KEYCODE_LEFT:
+                updateLayout(isPortait(), true);
+            break;
+            case KEYCODE_RIGHT:
+                updateLayout(isPortait(), false);
+            break;
+            case KEYCODE_UP:
+                updateLayout(true, isFullScreen());
+            break;
+            case KEYCODE_DOWN:
+                updateLayout(false, isFullScreen());
+            break;
+        }
+    }
 }
 
 void Director::setWindowSize(int width, int height)
