@@ -3,11 +3,11 @@
 #include "GLFW/glfw3.h"
 #include "Flags.h"
 #include "Log.h"
-//#include "gestureManager.h"
-//#include "gestureObject.h"
-//#include "gestureCommonFun.h"
 #include "CEGuiRender.h"
 #include "Director.h"
+
+#define NLOG(...) // LOG_BASE(__VA_ARGS__)
+#define NLOG_TRACE(...) // LOG_BASE_TRACE(__VA_ARGS__)
 
 enum MOUSE_STATUS {
     MOUSE_ENTER = 0x0001,
@@ -43,7 +43,7 @@ static MouseEvent s_mouseevent;
 
 
 void onMouseEvent(const MouseEvent& event) {
-    // printf("\n onMouseEvent: event:%d x:%d, y:%d flg:0x%08x +++ \n", event.event, event.x, event.y, event.status);
+    NLOG("onMouseEvent: event:%d x:%d, y:%d flg:0x%04x", event.event, event.x, event.y, event.status);
 
     TouchAction touchevent;
     switch (event.event) {
@@ -69,14 +69,13 @@ void onMouseEvent(const MouseEvent& event) {
 }
 
 void framebuffsize_callback(GLFWwindow* window, int width, int height) {
-    printf("\n framebuffsize_callback:%p  w:%d h:%d +++ \n", window, width, height);
+    NLOG_TRACE("framebuffsize_callback:%p  w:%d h:%d ", window, width, height);
     Director::instance()->setWindowSize(width, height);
-    printf("\n framebuffsize_callback --- \n");
 }
 
 void mouse_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    // printf("\n mouse_callback :%p button:%d action:%d mods:%d +++ \n", window, button, action, mods);
+    NLOG_TRACE("mouse_callback :%p button:%d action:%d mods:%d", window, button, action, mods);
     enum {
         MOUSEBUTTON_LEFT = 0,
         MOUSEBUTTON_RIGHT,
@@ -122,12 +121,11 @@ void mouse_callback(GLFWwindow* window, int button, int action, int mods)
         return;
     }
     onMouseEvent(s_mouseevent);
-    // printf("\n mouse_callback --- \n");
 }
 
 void cursorenter_callback(GLFWwindow* window, int enter)
 {
-    printf("\n cursorenter_callback :%p enter:%d +++ \n", window, enter);
+    NLOG_TRACE("cursorenter_callback :%p enter:%d ", window, enter);
 
     bool preEnter = s_mouseevent.status.testFlag(MOUSE_ENTER);
     bool curEnter = (enter == GL_TRUE) ? true : false;
@@ -152,7 +150,6 @@ void cursorenter_callback(GLFWwindow* window, int enter)
     s_mouseevent.status.setFlag(MOUSE_MIDDLE, false);
     onMouseEvent(s_mouseevent);
 
-    printf("\n cursorenter_callback :%p --- \n", window);
 }
 
 void cursorpos_callback(GLFWwindow* window, double x, double y)
@@ -168,7 +165,7 @@ void cursorpos_callback(GLFWwindow* window, double x, double y)
         && !s_mouseevent.status.testFlag(MOUSE_MIDDLE)) {
         return;
     }
-    // printf("\n cursorpos_callback :%p x:%d y:%d \n", window, s_mouseevent.x, s_mouseevent.y);
+    NLOG("cursorpos_callback :%p x:%d y:%d", window, s_mouseevent.x, s_mouseevent.y);
     s_mouseevent.event = MOUSE_MOVE;
     onMouseEvent(s_mouseevent);
 }
@@ -177,22 +174,21 @@ void dropfile_callback(GLFWwindow* window, int count, const char** path) {
     if (count <= 0 || path == NULL) {
         return;
     }
-    printf("\n dropfile_callback :%p count:%d +++ \n", window, count);
+    NLOG_TRACE("dropfile_callback :%p count:%d ", window, count);
     for (int i = 0; i < count; ++i) {
-        printf("\n [%d][%s] \n", i, path[i]);
+        NLOG(" [%d][%s] ", i, path[i]);
     }
-    printf("\n dropfile_callback :%p --- \n", window);
+
 }
 
 void close_callback(GLFWwindow* window)
 {
-     printf("\n close_callback :%p \n", window);
+     NLOG("close_callback :%p ", window);
 }
 
 //void scroll_callback(GLFWwindow* window, double x, double y)
 //{
-//    printf("\n scroll_callback :%p x:%.1lf y:%.1lf +++ \n", window, x, y);
-//    printf("\n scroll_callback --- \n");
+//    NLOG_TRACE("scroll_callback :%p x:%.1lf y:%.1lf ", window, x, y);
 //}
 
 
@@ -225,8 +221,8 @@ GLFWwindow* initGLWindow(const char* title, int w, int h)
     return window;
 }
 
-#define DEFAULT_SIZE_WIDTH (1280)
-#define DEFAULT_SIZE_HEIGHT (720)
+#define DEFAULT_SIZE_WIDTH (960)
+#define DEFAULT_SIZE_HEIGHT (540)
 #define DEFAULT_PIXEL_FACTOR (1.0)
 #define TITLE_NAME ("Tools")
 
@@ -247,17 +243,9 @@ int main(int argc, char** argv)
 
         Director::instance()->init();
         Director::instance()->setWindowSize(DEFAULT_SIZE_WIDTH, DEFAULT_SIZE_HEIGHT);
-        Director::instance()->setTouchRegion(160, 0, DEFAULT_SIZE_HEIGHT, DEFAULT_SIZE_HEIGHT);
-//        loadBmp(0, "/xxxx/Cube.bmp", 150, 150);
-//        for (int i = 0; i < 6; ++i)
-//        Director::instance()->setPlaneTexture(i, 0);
-
+        Director::instance()->setTouchRegion((DEFAULT_SIZE_WIDTH-DEFAULT_SIZE_HEIGHT)/2, 0, DEFAULT_SIZE_HEIGHT, DEFAULT_SIZE_HEIGHT);
 
         while (!glfwWindowShouldClose(window)) {
-//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//            glClear(GL_COLOR_BUFFER_BIT);
-//            glfwSwapBuffers(window);
-
 //            if (render.loop()) {
 //                glfwSwapBuffers(window);
 //            }
@@ -274,5 +262,4 @@ int main(int argc, char** argv)
     render.deinitRender();
     glfwTerminate();
     return 0;
-
 }
