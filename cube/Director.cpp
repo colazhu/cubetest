@@ -44,26 +44,6 @@ void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)
 
 }
 
-struct MouseState
-{
-    enum MouseButtonState{
-        MouseButtonLeft = 0x0001,
-        MouseButtonRight = 0x0002,
-        MouseButtonMiddle = 0x0004,
-    };
-    DECLARE_FLAGS(MouseButtonStates, MouseButtonState)
-
-    void reset() {
-        mousestates = 0;
-        x = 0;
-        y = 0;
-    }
-
-    MouseButtonStates mousestates;
-    float x;
-    float y;
-};
-
 class DirectorPrivate
 {
 public:
@@ -95,7 +75,6 @@ public:
     Rect winSize;
     Rect touchRegion;
     MatrixStack matrixStack;
-    MouseState mouseState;
 
     TextureCache textureCache;
     ProgramCache programCache;
@@ -369,11 +348,16 @@ void Director::injectTouch(const TouchEvent& event)
     }
 }
 
-void Director::injectGesture(const GestureObject& ev)
+void Director::injectGesture(const GestureObject& event)
 {
     if (currentScene()) {
-        currentScene()->onGesture(ev);
+        currentScene()->onGesture(event);
     }
+}
+
+void Director::injectKey(const KeyEvent& event)
+{
+
 }
 
 void Director::setWindowSize(int width, int height)

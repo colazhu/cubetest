@@ -167,4 +167,14 @@ struct TouchEvent : public Event
     int x;
     int y;
 };
+
+
+struct KeyEvent : public Event
+{
+    int action;
+    int key;
+    int scancode;
+    int mods;
+};
+
 #endif // NODEDEF_H

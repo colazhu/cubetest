@@ -63,7 +63,8 @@ public:
     ActionCache& actionCache();
 
     void injectTouch(const TouchEvent& event);
-    void injectGesture(const GestureObject& ev);
+    void injectGesture(const GestureObject& event);
+    void injectKey(const KeyEvent& event);
     float getFps();
     void setPlaneTexture(int planeid, int txtid);
     void addTexture(int txtid, int gltxtid, int w, int h);

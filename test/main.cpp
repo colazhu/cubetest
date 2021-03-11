@@ -196,7 +196,16 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     LOG_BASE_TRACE("process_input_callabck:%p  key:%d scancode:%d  action:%d mods:%d", window, key, scancode, action, mods);
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+        return;
     }
+
+    KeyEvent event;
+    event.action = action;
+    event.key = key;
+    event.mods = mods;
+    event.scancode = scancode;
+
+    Director::instance()->injectKey(event);
 }
 
 GLFWwindow* initGLWindow(const char* title, int w, int h)
