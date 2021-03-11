@@ -75,19 +75,12 @@ void Scene::init()
     updateArcball();
 
     Director* director = Director::instance();
-    RectNode* background = new RectNode("background", this);
-    Rect winrect = director->getWindowSize();
-    background->setRatio(winrect.size.width/winrect.size.height);
-    background->useMVP(false);
-    background->initGeometryBuffer();
-    background->setTexture(100); // background textureid
-
-//    RectNode* terrain = new RectNode("terrain", this);
-//    terrain->initGeometryBuffer();
-//    terrain->setTexture(101);
-//    terrain->setScale(6);
-//    terrain->setRotationX(90);
-//    terrain->setPositionY(-6);
+//    RectNode* background = new RectNode("background", this);
+//    Rect winrect = director->getWindowSize();
+//    background->setRatio(winrect.size.width/winrect.size.height);
+//    background->useMVP(false);
+//    background->initGeometryBuffer();
+//    background->setTexture(100); // background textureid
     
     LightCache& lightcache = director->lightCache();
     lightcache.setGlobalAmbientColor(AMBIENTCOLOR);
@@ -96,14 +89,14 @@ void Scene::init()
     Cube* cb_light0 = new Cube("cb_light0", 1, this);
     cb_light0->initGeometryBuffer();
     cb_light0->setScale(1);
-    cb_light0->setPosition(Vector3(-posscale*0.8*CUBE_SCALE, -posscale*0.5*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
+    cb_light0->setPosition(Vector3(-posscale*0.8*CUBE_SCALE, -posscale*0.2*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
     cb_light0->setDummyMode(true);
     cb_light0->hide();
 
     Cube* cb_light1 = new Cube("cb_light1", 1, this);
     cb_light1->initGeometryBuffer();
     cb_light1->setScale(1);
-    cb_light1->setPosition(Vector3(posscale*0.8*CUBE_SCALE, -posscale*0.5*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
+    cb_light1->setPosition(Vector3(posscale*0.8*CUBE_SCALE, -posscale*0.2*CUBE_SCALE, 0.5*posscale*CUBE_SCALE));
     cb_light1->setDummyMode(true);
     cb_light1->hide();
 
@@ -149,6 +142,14 @@ void Scene::init()
     CubePlane* cubeplane = new CubePlane(CHILD_PLANE, this);
     cubeplane->initGeometryBuffer();
     cubeplane->setScale(CUBE_SCALE);
+
+
+    RectNode* terrain = new RectNode("terrain", this);
+    terrain->initGeometryBuffer();
+    terrain->setTexture(100);
+    terrain->setScale(10);
+    terrain->setRotationX(90);
+    terrain->setPositionY(-6);
 
 //        Cube* cube2 = new Cube(CHILD_CUBE, this);
 //        cube2->initGeometryBuffer();

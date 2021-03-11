@@ -8,8 +8,8 @@ m_txtid(0),
 m_ratio(1.0)
 {
     Vector4 color(1.0, 1.0, 1.0, 1.0);
-    m_material.setAmbient(color * 1.0);
-    m_material.setDiffuse(color * 1.0);
+    m_material.setAmbient(color * 5.0);
+    m_material.setDiffuse(color * 5.0);
     m_material.setSpecular(color * 1.0, 50.0);
 }
 
@@ -40,6 +40,7 @@ void RectNode::onInitGeometryBuffer()
     for (int i = 0; i < 6; ++i) {
         m_vertices[i].normal.set(0, 0, 1);
         m_vertices[i].colors = Color4F::WHITE;
+        m_vertices[i].colors.a = 0.2;
         m_vertices[i].position -= Vector3(ratio, 1, 0);
     }
 

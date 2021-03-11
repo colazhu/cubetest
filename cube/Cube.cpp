@@ -330,7 +330,7 @@ void Cube::onDraw()
     }
     else {
         drawCube();
-        // drawCubeMirror();
+        drawCubeMirror();
         // drawIntersection();
     }
 }
