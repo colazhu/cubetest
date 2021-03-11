@@ -42,7 +42,7 @@ Cube::Cube(const std::string& name, int stepsPerPlane, Node* parent):
     Vector4 color(1.0, 1.0, 1.0, 1.0);
     m_material.setAmbient(color * 1.0);
     m_material.setDiffuse(color * 1.0);
-    m_material.setSpecular(color * 1.0, 50.0);
+    m_material.setSpecular(color * 1.0, 4.0);
     // m_material.setEmssion(color);
 }
 

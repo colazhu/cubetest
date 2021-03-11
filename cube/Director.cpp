@@ -18,7 +18,7 @@
 #define CAMERA_DEFAULT "camera_default"
 #define SCENE_DEFAULT "scene_default"
 
-#define CAMERA_EYE Vector3(0, 0, 15)
+#define CAMERA_EYE Vector3(0, 0, 12)
 #define CAMERA_DIR Vector3(0, 0,-1)
 
 void onGestureEvent(const struct Gesture_Event_Data_List* list, void *data)

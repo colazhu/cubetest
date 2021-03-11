@@ -54,7 +54,6 @@ public:
     void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
     void bindBuffer(GLenum target, GLuint buffer);
 
-    protected:
     GLuint                      d_vertexArrayObject;
     BlendFuncParams             d_blendFuncParams;
     BlendFuncSeperateParams     d_blendFuncSeperateParams;

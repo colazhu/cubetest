@@ -23,7 +23,7 @@
 #define LIGHTCOLOR1 Color4F(1.0, 0.0, 0.0, 1.0)
 #define LIGHTCOLOR2 Color4F(0.0, 0.0, 1.0, 1.0)
 #define CAMERA_Z_MAX (20.0f)
-#define CAMERA_Z_MIN (11.0f)
+#define CAMERA_Z_MIN (12.0f)
 
 class CameraZTransition : public IntervalAction
 {
@@ -132,7 +132,7 @@ void Scene::init()
     lightcache.setFog(Vector4(0.0, 0, 0, 1.0), 25, 1.0);
     lightcache.useFog(true);
 
-    Cube* cube = new Cube(CHILD_CUBE, 10, this);
+    Cube* cube = new Cube(CHILD_CUBE, 32, this);
     cube->initGeometryBuffer();
     cube->setScale(CUBE_SCALE);
     // cube->hide();
