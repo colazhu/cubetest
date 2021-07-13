@@ -1,5 +1,6 @@
 TEMPLATE = lib
 TARGET = FreeImage
+QT-=app_bundle gui core
 CONFIG -= app_bundle gui core
 QT -= app_bundle gui core
 #CONFIG += staticlib

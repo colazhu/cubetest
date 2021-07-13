@@ -7,13 +7,14 @@ CONFIG += c++11
 
 DESTDIR  = $$(PROJROOT)/out
 
-LIBS += -lglfw -lGLESv2 -lEGL
-LIBS += -L$$DESTDIR -lcube -lgesture -lCEGUIBase -lCEGUIOpenGLRenderer -lz -lfreetype
+LIBS += -lglfw -lGLESv2 -lEGL -ldl -lpcre
+LIBS += -L$$DESTDIR -lz -lfreetype -lcube -lgesture -lCEGUIBase -lCEGUIOpenGLRenderer
 
 include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
 include($$(PROJROOT)/cegui/CEGUIOpenGLRenderer/CEGUIOpenGLRenderer.pri)
 
 APP_PATH = \
+    $$(PROJROOT) \
     $$(PROJROOT)/base \
     $$(PROJROOT)/gesture \
     $$(PROJROOT)/gesture/data \
@@ -25,9 +26,9 @@ DEPENDPATH += $$APP_PATH
 INCLUDEPATH += $$APP_PATH
 
 HEADERS += \
-    base/Flags.h \
-    base/Log.h \
-    base/Base.h \
+    ../base/Flags.h \
+    ../base/Log.h \
+    ../base/Base.h \
     CEGuiRender.h
 
 SOURCES += \

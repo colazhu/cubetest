@@ -1,5 +1,6 @@
 TEMPLATE = lib
 TARGET = CEGUIOpenGLRenderer
+QT-=app_bundle gui core
 CONFIG -= app_bundle gui core
 QT -= app_bundle gui core
 CONFIG += c++11

@@ -1,11 +1,10 @@
 TEMPLATE = lib
 TARGET = CEGUIBase
+QT-=app_bundle gui core
 CONFIG -= app_bundle gui core
-QT -= app_bundle gui core
 CONFIG += c++11
 
 # DEFINES += XXX_EXPORT
-
 include(CEGUIBase.pri)
 include($$(PROJROOT)/cegui/external/freetype/freetype.pri)
 include($$(PROJROOT)/cegui/external/zlib/zlib.pri)
