@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = freetype
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 #CONFIG += staticlib
 
 # DEFINES += XXX_EXPORT

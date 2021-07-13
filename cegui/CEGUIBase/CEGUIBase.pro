@@ -1,18 +1,18 @@
 TEMPLATE = lib
 TARGET = CEGUIBase
 CONFIG -= app_bundle gui core
-#CONFIG += c++11
+QT -= app_bundle gui core
+CONFIG += c++11
 
 # DEFINES += XXX_EXPORT
+
 include(CEGUIBase.pri)
 include($$(PROJROOT)/cegui/external/freetype/freetype.pri)
 include($$(PROJROOT)/cegui/external/zlib/zlib.pri)
 # LIBS += -lXXX -lXXX -lXXX -lXXX
-
+DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lz -lfreetype
 LIBS += -ldl -lpcre
-
-DESTDIR  = $$(PROJROOT)/out
 
 HEADERS += \
     include/CEGUI/Affector.h \

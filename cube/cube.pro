@@ -2,6 +2,7 @@ TEMPLATE = lib
 TARGET = cube
 
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 CONFIG += c++11
 
 DEFINES+=USE_CEGUI

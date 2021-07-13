@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = CEGUIOpenGLRenderer
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 CONFIG += c++11
 
 include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)

@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = z
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 #CONFIG += staticlib
 #DEFINES += ZLIB_DLL
 

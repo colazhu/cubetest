@@ -2,12 +2,13 @@ TEMPLATE = app
 TARGET = tst_cube
 
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 CONFIG += c++11
 
 DESTDIR  = $$(PROJROOT)/out
 
 LIBS += -lglfw -lGLESv2 -lEGL
-LIBS += -L$$DESTDIR -lcube -lgesture -lCEGUIBase -lCEGUIOpenGLRenderer -lz
+LIBS += -L$$DESTDIR -lcube -lgesture -lCEGUIBase -lCEGUIOpenGLRenderer -lz -lfreetype
 
 include($$(PROJROOT)/cegui/CEGUIBase/CEGUIBase.pri)
 include($$(PROJROOT)/cegui/CEGUIOpenGLRenderer/CEGUIOpenGLRenderer.pri)

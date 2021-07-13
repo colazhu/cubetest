@@ -134,7 +134,7 @@ void Scene::init()
     lightcache.setFog(Vector4(0.0, 0, 0, 1.0), 25, 1.0);
     lightcache.useFog(true);
 
-    Cube* cube = new Cube(CHILD_CUBE, 32, this);
+    Cube* cube = new Cube(CHILD_CUBE, 10, this);
     cube->initGeometryBuffer();
     cube->setScale(CUBE_SCALE);
     // cube->hide();

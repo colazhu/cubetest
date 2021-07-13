@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = FreeImage
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 #CONFIG += staticlib
 
 include($$(PROJROOT)/cegui/external/FreeImage/FreeImage.pri)

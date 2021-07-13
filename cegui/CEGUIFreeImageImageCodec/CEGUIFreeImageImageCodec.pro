@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = CEGUIFreeImageImageCodec
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 #CONFIG += c++11
 DESTDIR  = $$(PROJROOT)/out
 LIBS += -L$$DESTDIR -lFreeImage  -lpng -lz

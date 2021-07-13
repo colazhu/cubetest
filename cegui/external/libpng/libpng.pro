@@ -1,6 +1,7 @@
 TEMPLATE    = lib
 TARGET      = png
 CONFIG -= app_bundle gui core
+QT -= app_bundle gui core
 # CONFIG += staticlib
 
 # DEFINES += PNG_ARM_NEON_OPT=0
